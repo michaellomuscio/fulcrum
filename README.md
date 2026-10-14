@@ -3,16 +3,19 @@
 A cardboard ball-and-beam robot, built from an ELEGOO Most Complete Starter Kit, whose brain is
 trained by reinforcement learning in a browser simulator and then sent over USB into the Arduino.
 
-**Start with the guide**: 30 illustrated, narrated steps, with a 3D model, wiring diagrams for every step,
-printable cut templates (`guide/fulcrum-cut-templates.pdf`) and 16 minutes of narration.
-Serve the folder (below) and open http://localhost:8642/guide/.
+**Start with the guide: https://michaellomuscio.github.io/fulcrum/** — 30 illustrated, narrated steps, with a
+3D model, wiring diagrams for every step, printable cut templates (`guide/fulcrum-cut-templates.pdf`) and
+16 minutes of narration.
+
+**The Gym: https://michaellomuscio.github.io/fulcrum/gym/** — train a brain, examine it, and (in Chrome or Edge)
+connect to the robot over USB, install its firmware and send it the brain. Nothing to install.
 
 ## Quick start
 
 1. Build the cardboard beam and wire the electronics (guide parts 1–2).
-2. Double-click **`Fulcrum Gym.command`** (macOS). Chrome opens the Gym at http://localhost:8642/gym/.
-   Elsewhere: run `python3 -m http.server 8642` in this folder and open that address in Chrome
-   (USB access needs Chrome and a localhost or https page).
+2. Open the Gym (link above) in Chrome or Edge. To run it from your own computer instead (works offline),
+   double-click **`Fulcrum Gym.command`** (macOS) or run `python3 -m http.server 8642` in this folder and open
+   http://localhost:8642/gym/.
 3. Robot tab: Connect, Install firmware, check the parts, mount the servo, Calibrate.
 4. Dream tab: Start training. Exam tab: run the exam. Robot tab: Send best brain, Brain mode.
 

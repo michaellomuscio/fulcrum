@@ -92,7 +92,7 @@
  {
   "id": "gym",
   "title": "Open the Gym",
-  "text": "Time to bring it to life. Everything happens in the Fulcrum Gym, a web app that runs on your Mac.\n\nIn the fulcrum folder, double-click Fulcrum Gym dot command. A small Terminal window opens, and the Gym appears in Chrome. Leave that window open while you work.\n\nThe Gym has three tabs. Dream, where the brain learns. Exam, where it's tested. And Robot, which talks to the real thing."
+  "text": "Time to bring it to life. Everything happens in the Fulcrum Gym, a web app that runs in Chrome.\n\nThe easiest way in is the link in this step. Or, to run it from your own Mac, open the fulcrum folder and double-click Fulcrum Gym dot command. A small Terminal window opens, and the Gym appears in Chrome. Leave that window open while you work.\n\nThe Gym has three tabs. Dream, where the brain learns. Exam, where it's tested. And Robot, which talks to the real thing."
  },
  {
   "id": "firmware",

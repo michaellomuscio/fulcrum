@@ -19,7 +19,8 @@ const page = sized(read('guide.html'))
   .replace('/*GUIDE_CSS*/', () => read('guide.css'))
   .replace('/*GUIDE_JS*/', () => `window.FULCRUM_DURATIONS = ${JSON.stringify(dur)};\n` + read('guide.js'));
 fs.mkdirSync(path.join(dir, 'dist'), { recursive: true });
-fs.writeFileSync(path.join(dir, 'dist/index.html'), page);
+// inside claude.ai the Gym can't reach USB, so the published guide sends people to the hosted Gym
+fs.writeFileSync(path.join(dir, 'dist/index.html'), page.replaceAll('href="gym/index.html"', 'href="https://michaellomuscio.github.io/fulcrum/gym/" target="_blank" rel="noopener"'));
 const cut = page.indexOf('<div class="page">');
 const local = `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n${page.slice(0, cut)}\n</head>\n<body>\n${page.slice(cut).replaceAll('href="gym/index.html"', 'href="../gym/index.html"')}\n</body>\n</html>\n`;
 fs.writeFileSync(path.join(dir, 'index.html'), local);

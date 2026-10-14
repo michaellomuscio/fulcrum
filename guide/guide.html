@@ -320,10 +320,10 @@
       <div class="step-head"><span class="step-no">3.1</span><h3>Open the Gym</h3><button class="listen" data-audio="gym"></button></div>
       <figure class="shot"><img src="img/gym-dream.png" alt="The Gym's Dream tab: a simulated Fulcrum, practice thumbnails, a learning curve and the brain's decision map." loading="lazy"></figure>
       <ol class="instr">
-        <li>In Finder, open the <code>fulcrum</code> folder and double-click <strong>Fulcrum Gym.command</strong>. (Not on a Mac? In that folder run <code>python3 -m http.server 8642</code> and open <code>localhost:8642/gym/</code> in Chrome.)</li>
-        <li>A small Terminal window opens and Chrome shows the Gym at <code>localhost:8642/gym/</code>. Keep the Terminal window open while you work.</li>
+        <li>Open the Gym in Chrome at <a href="https://michaellomuscio.github.io/fulcrum/gym/" target="_blank" rel="noopener">michaellomuscio.github.io/fulcrum/gym</a>. It can reach the Arduino over USB from there.</li>
+        <li>Or run it from your Mac, which also works offline: in Finder, open the <code>fulcrum</code> folder and double-click <strong>Fulcrum Gym.command</strong>. Chrome shows the Gym at <code>localhost:8642/gym/</code>; keep the small Terminal window open while you work. (Not on a Mac? Run <code>python3 -m http.server 8642</code> in the folder.)</li>
       </ol>
-      <p class="note">The <a href="gym/index.html">copy of the Gym inside this guide</a> can train, run exams and drive a <strong>virtual robot</strong>, but only the copy on your Mac can reach the USB port. Chrome is required for USB (Safari doesn't support it).</p>
+      <p class="note">USB needs Chrome or Edge; Safari and Firefox don't support it. A Gym opened from inside claude.ai can train, run exams and drive a virtual robot, but can't reach USB.</p>
       <div class="done-row"><label class="done"><input type="checkbox" data-done="gym"> Done</label></div>
     </section>
 
@@ -545,7 +545,7 @@
       </tbody></table></div>
     </div>
 
-    <footer>Fulcrum, built with Claude Code for an ELEGOO Most Complete Starter Kit. Narration voiced with Kokoro (af_heart), on your Mac.</footer>
+    <footer>Fulcrum, built with Claude Code for an ELEGOO Most Complete Starter Kit. Narration voiced offline with Kokoro (af_heart). Source: <a href="https://github.com/michaellomuscio/fulcrum" target="_blank" rel="noopener">github.com/michaellomuscio/fulcrum</a>.</footer>
   </main>
 </div>
 
