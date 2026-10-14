@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Viewer test</title>
+<style>body{margin:0;padding:24px;background:#e9edf1;font:15px system-ui} #v{width:900px;height:560px;background:#f6f8fa;border:1px solid #d6dce3;border-radius:10px} @media (prefers-color-scheme: dark){body{background:#0c1015}#v{background:#141a21;border-color:#27303a}}</style></head>
+<body><div id="v"></div><p id="state">loading</p>
+<script type="module">
+import { mountViewer } from '../viewer.js';
+const r = await mountViewer(document.getElementById('v'), { heroSrc: '../img/hero.png' });
+document.getElementById('state').textContent = r ? 'webgl viewer running' : 'fell back to the still picture';
+window.viewerState = document.getElementById('state').textContent;
+</script></body></html>

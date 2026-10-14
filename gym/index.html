@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fulcrum Gym</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Atkinson+Hyperlegible:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="gym.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <span class="wordmark">FULCRUM</span>
+    <span class="brand-sub">Gym</span>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Gym sections">
+    <button class="tab" role="tab" id="tab-dream" aria-controls="view-dream" aria-selected="true" data-view="dream">1 · Dream</button>
+    <button class="tab" role="tab" id="tab-exam" aria-controls="view-exam" aria-selected="false" data-view="exam">2 · Exam</button>
+    <button class="tab" role="tab" id="tab-robot" aria-controls="view-robot" aria-selected="false" data-view="robot">3 · Robot</button>
+  </nav>
+  <div class="conn" id="conn-chip" data-state="off"><span class="dot"></span><span id="conn-text">Robot not connected</span></div>
+</header>
+
+<main>
+  <!-- ============================================================ DREAM -->
+  <section class="view" id="view-dream" role="tabpanel" aria-labelledby="tab-dream">
+    <div class="dream-grid">
+      <div class="col-main">
+        <article class="card stage-card">
+          <div class="card-head">
+            <div>
+              <h2 class="eyebrow">Live dream</h2>
+              <p class="lede" id="world-line">A simulated Fulcrum, running the brain as it is right now.</p>
+            </div>
+            <div class="seg" role="radiogroup" aria-label="Who controls the tilt">
+              <button class="seg-btn" role="radio" aria-checked="true" data-ctrl="brain" id="ctrl-brain">Brain</button>
+              <button class="seg-btn" role="radio" aria-checked="false" data-ctrl="pid" id="ctrl-pid">PID</button>
+              <button class="seg-btn" role="radio" aria-checked="false" data-ctrl="you" id="ctrl-you">You</button>
+            </div>
+          </div>
+          <div class="stage-wrap">
+            <canvas id="stage" class="stage" aria-label="Side view of the simulated robot"></canvas>
+            <div class="chips" id="world-chips"></div>
+            <div class="you-hint" id="you-hint" hidden>Move your mouse up and down over the robot (or use ↑ ↓) to tilt the beam yourself.</div>
+          </div>
+          <div class="stage-foot">
+            <span class="hint">Click the track to move the target. Click the ball to flick it.</span>
+            <div class="stage-actions">
+              <button class="btn ghost" id="btn-new-world">New dream world</button>
+              <label class="select-wrap">Ball
+                <select id="ball-select">
+                  <option value="pingpong">Ping-pong ball</option>
+                  <option value="golf">Golf ball</option>
+                  <option value="rubber">Small rubber ball</option>
+                </select>
+              </label>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="eyebrow">Practice worlds</h2>
+              <p class="lede">12 of the <span id="n-envs">64</span> worlds it practices in at once, each with its own physics, running the brain with its exploration noise on.</p>
+            </div>
+          </div>
+          <div class="thumbs" id="thumbs"></div>
+        </article>
+
+        <article class="card">
+          <div class="card-head tight">
+            <h2 class="eyebrow">Inside the brain</h2>
+            <span class="meta">6 inputs · 32 neurons · 1 output</span>
+          </div>
+          <canvas id="net" class="net" aria-label="The neural network with live activity"></canvas>
+          <p class="caption">Lines are connections (blue negative, red positive, thicker is stronger). Circles light up as neurons fire for the live dream.</p>
+        </article>
+      </div>
+
+      <div class="col-side">
+        <article class="card train-card">
+          <div class="train-top">
+            <button class="btn primary big" id="btn-train">Start training</button>
+            <button class="btn ghost" id="btn-reset">New brain</button>
+          </div>
+          <dl class="stats">
+            <div><dt>Practice</dt><dd id="st-practice">0 min</dd><span class="sub" id="st-wall">in 0 s of real time</span></div>
+            <div><dt>Practice runs</dt><dd id="st-episodes">0</dd><span class="sub" id="st-iter">0 learning steps</span></div>
+            <div><dt>Average miss</dt><dd id="st-err">–</dd><span class="sub">distance from the target, last 50 runs</span></div>
+            <div><dt>Curiosity</dt><dd id="st-std">–</dd><span class="sub">how much it still experiments</span></div>
+          </dl>
+          <label class="toggle">
+            <input type="checkbox" id="dr-toggle" checked>
+            <span class="track" aria-hidden="true"></span>
+            <span><strong>Train for the real world.</strong> Every practice run gets different friction, servo lag, sensor noise and a crooked level. Turn this off to see why it matters.</span>
+          </label>
+        </article>
+
+        <article class="card">
+          <div class="card-head tight">
+            <h2 class="eyebrow">Learning curve</h2>
+            <span class="meta" id="curve-meta"></span>
+          </div>
+          <div class="chart-box"><canvas id="curve" class="chart" aria-label="Average miss distance over practice time"></canvas><div class="tip" id="curve-tip" hidden></div></div>
+          <p class="caption">Average distance between ball and target during practice. Lower is better. The gray line is a classic hand-tuned PID controller in the same worlds.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-head tight">
+            <h2 class="eyebrow">What the brain does</h2>
+          </div>
+          <div class="chart-box square"><canvas id="policy" class="chart" aria-label="Map of tilt decisions by ball position and speed"></canvas><div class="tip" id="policy-tip" hidden></div></div>
+          <div class="legend-ramp"><span>tilt toward sensor</span><span class="ramp" aria-hidden="true"></span><span>tilt away</span></div>
+          <p class="caption">Every pixel is a situation: where the ball is (left–right) and how fast it rolls (up–down). Color is the tilt the brain picks. The dot is the live dream; watch it spiral into the center.</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ EXAM -->
+  <section class="view" id="view-exam" role="tabpanel" aria-labelledby="tab-exam" hidden>
+    <article class="card exam-head">
+      <div>
+        <h2 class="eyebrow">Final exam</h2>
+        <p class="lede">32 worlds the brain has never seen, run for 30 seconds each with the target moving. A world passes if the ball settles within 2 cm and hits the walls at most twice. The brain graded here is the compressed 8-bit copy the Arduino will run.</p>
+      </div>
+      <div class="exam-pick">
+        <div class="seg" role="radiogroup" aria-label="Which brain to examine">
+          <button class="seg-btn" role="radio" aria-checked="true" data-brain="best" id="pick-best">Best so far</button>
+          <button class="seg-btn" role="radio" aria-checked="false" data-brain="current" id="pick-current">Current</button>
+          <button class="seg-btn" role="radio" aria-checked="false" data-brain="starter" id="pick-starter">Starter</button>
+        </div>
+        <button class="btn primary" id="btn-exam">Run the exam</button>
+      </div>
+    </article>
+    <div class="exam-body">
+      <article class="card">
+        <div class="tiles" id="exam-tiles">
+          <div class="tile"><span class="t-label">Worlds passed</span><span class="t-val" id="ex-pass">–</span><span class="t-sub" id="ex-pass-sub">run the exam</span></div>
+          <div class="tile"><span class="t-label">Settled within</span><span class="t-val" id="ex-err">–</span><span class="t-sub" id="ex-err-sub"></span></div>
+          <div class="tile"><span class="t-label">Wall hits</span><span class="t-val" id="ex-hits">–</span><span class="t-sub" id="ex-hits-sub"></span></div>
+          <div class="tile"><span class="t-label">Brain size</span><span class="t-val" id="ex-size">544 B</span><span class="t-sub">of the Uno's 1,024-byte EEPROM</span></div>
+        </div>
+        <div class="worlds" id="exam-worlds"></div>
+      </article>
+      <article class="card">
+        <div class="card-head tight"><h2 class="eyebrow">Where the brain lives</h2><span class="meta">Arduino EEPROM, 1,024 bytes</span></div>
+        <canvas id="eeprom" class="eeprom" aria-label="Map of the Arduino's memory"></canvas>
+        <div class="key"><span><i class="k k-set"></i>settings and calibration</span><span><i class="k k-brain"></i>the brain</span><span><i class="k k-free"></i>free</span></div>
+        <p class="caption">Each square is one byte. The trained network's 401 numbers are squeezed to one byte each (one scale per layer), plus a header and a checksum the robot verifies before it trusts a new brain.</p>
+        <button class="btn primary wide" id="btn-to-robot">Send this brain to Fulcrum →</button>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================================================ ROBOT -->
+  <section class="view" id="view-robot" role="tabpanel" aria-labelledby="tab-robot" hidden>
+    <div class="no-serial card" id="no-serial" hidden>
+      <h2 class="eyebrow">Open the Gym from your Mac to talk to the robot</h2>
+      <p>This copy of the Gym can dream, run exams and drive a virtual robot, but browsers only let a page reach a USB device when it runs from your own computer. On your Mac, double-click <code>Fulcrum Gym.command</code> in the <code>fulcrum</code> folder (it opens this same Gym in Chrome at <code>localhost</code>), then come back to this tab.</p>
+    </div>
+    <div class="robot-grid" id="robot-grid">
+      <div class="col-side">
+        <article class="card">
+          <h2 class="eyebrow">1 · Connect</h2>
+          <p class="lede">Plug Fulcrum into your Mac with the USB cable, then pick its port (it is usually called <em>usbmodem</em> or <em>usbserial</em>).</p>
+          <div class="row wrap"><button class="btn primary" id="btn-connect">Connect</button><button class="btn ghost" id="btn-virtual">No robot yet? Try a virtual one</button><button class="btn ghost" id="btn-disconnect" hidden>Disconnect</button></div>
+          <p class="status" id="hello-line"></p>
+        </article>
+        <article class="card">
+          <h2 class="eyebrow">2 · Firmware</h2>
+          <p class="lede">The program that runs on the Arduino. Install it once; after that, brains travel over the same cable without reinstalling anything.</p>
+          <div class="row"><button class="btn" id="btn-flash">Install firmware</button><span class="status" id="flash-status"></span></div>
+          <progress id="flash-bar" max="1" value="0" hidden></progress>
+        </article>
+        <article class="card">
+          <h2 class="eyebrow">3 · Check the parts</h2>
+          <div class="checks">
+            <div class="check"><span class="c-name">Sonar</span><span class="c-val" id="ck-sonar">–</span><span class="c-hint">wave your hand over the track</span></div>
+            <div class="check"><span class="c-name">Gyro</span><span class="c-val" id="ck-gyro">–</span><span class="c-hint">GY-521 board on the beam</span></div>
+            <div class="check"><span class="c-name">Knob</span><span class="c-val" id="ck-knob">–</span><span class="c-hint">turn it end to end</span></div>
+            <div class="check"><span class="c-name">Remote</span><span class="c-val" id="ck-ir">–</span><span class="c-hint">press any button</span></div>
+          </div>
+          <div class="row wrap">
+            <button class="btn ghost" id="ck-tilt-n">Tilt toward sensor</button>
+            <button class="btn ghost" id="ck-level">Level</button>
+            <button class="btn ghost" id="ck-tilt-p">Tilt away</button>
+            <button class="btn ghost" id="ck-beep">Beep</button>
+            <button class="btn ghost" id="ck-leds">Light every LED</button>
+            <button class="btn ghost" id="ck-rotate">Rotate face</button>
+          </div>
+        </article>
+        <article class="card">
+          <h2 class="eyebrow">4 · Calibrate</h2>
+          <p class="lede">Put the ball on the track, then start. Fulcrum sweeps the servo while the gyro watches, rolls the ball both ways to learn which way is which, then finds true level. About 50 seconds.</p>
+          <div class="row"><button class="btn" id="btn-cal">Calibrate</button><span class="status" id="cal-status"></span></div>
+          <div class="chart-box short"><canvas id="cal-chart" class="chart" aria-label="Beam angle measured against servo position"></canvas></div>
+          <ol class="cal-steps" id="cal-steps">
+            <li data-step="sweep">Sweep: servo position to beam angle</li>
+            <li data-step="ball">Ball test: which way rolls away</li>
+            <li data-step="level">Auto-level: find true level</li>
+          </ol>
+        </article>
+        <article class="card">
+          <h2 class="eyebrow">5 · Brain</h2>
+          <p class="lede">On the robot now: <strong id="robot-brain">–</strong></p>
+          <div class="row wrap">
+            <button class="btn primary" id="btn-upload">Send best brain</button>
+            <button class="btn ghost" id="btn-starter">Restore starter brain</button>
+          </div>
+          <progress id="up-bar" max="1" value="0" hidden></progress>
+          <p class="status" id="up-status"></p>
+        </article>
+      </div>
+      <div class="col-main">
+        <article class="card stage-card">
+          <div class="card-head">
+            <div>
+              <h2 class="eyebrow">Reality</h2>
+              <p class="lede" id="reality-line">What the robot senses, live over USB.</p>
+            </div>
+            <div class="seg" role="radiogroup" aria-label="Robot mode">
+              <button class="seg-btn" role="radio" aria-checked="false" data-mode="1">Brain</button>
+              <button class="seg-btn" role="radio" aria-checked="false" data-mode="2">PID</button>
+              <button class="seg-btn" role="radio" aria-checked="false" data-mode="3">Knob tilts</button>
+              <button class="seg-btn" role="radio" aria-checked="true" data-mode="0">Rest</button>
+            </div>
+          </div>
+          <div class="stage-wrap"><canvas id="real-stage" class="stage" aria-label="Side view of the real robot from its sensors"></canvas></div>
+          <div class="stage-foot">
+            <label class="slider">Target <input type="range" id="target-slider" min="100" max="320" value="210"> <output id="target-out">21 cm</output></label>
+            <button class="btn ghost" id="btn-knob">Follow the knob</button>
+            <span class="meta" id="think-line"></span>
+          </div>
+        </article>
+        <article class="card">
+          <div class="card-head tight"><h2 class="eyebrow">Ball and target, last 20 seconds</h2><span class="meta" id="tele-meta"></span></div>
+          <div class="chart-box"><canvas id="tele-chart" class="chart" aria-label="Ball position and target over time"></canvas><div class="tip" id="tele-tip" hidden></div></div>
+        </article>
+        <article class="card">
+          <div class="card-head">
+            <div>
+              <h2 class="eyebrow">Dream vs reality</h2>
+              <p class="lede">The same 20-second test twice: once on the robot, once in a nominal dream with the same brain. The gap between the lines is the reality gap.</p>
+            </div>
+            <button class="btn" id="btn-step">Run the test</button>
+          </div>
+          <div class="chart-box"><canvas id="step-chart" class="chart" aria-label="Robot and simulation responding to the same target changes"></canvas><div class="tip" id="step-tip" hidden></div></div>
+          <p class="status" id="step-status"></p>
+        </article>
+        <article class="card log-card">
+          <details>
+            <summary>Serial log</summary>
+            <pre class="log" id="log"></pre>
+            <form class="row" id="cmd-form"><input id="cmd-input" class="cmd" placeholder="Send a command, for example ?" autocomplete="off" spellcheck="false"><button class="btn ghost" type="submit">Send</button></form>
+          </details>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>

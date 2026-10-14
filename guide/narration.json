@@ -1,0 +1,152 @@
+[
+ {
+  "id": "intro",
+  "title": "Welcome",
+  "text": "Welcome to Fulcrum. You're going to build a cardboard robot that balances a ping-pong ball on a tilting track.\n\nNobody programs its balancing by hand. Its brain learns in a simulator: a dream world where thousands of practice runs take about a minute. Then you send that brain down a U S B cable into the Arduino, and find out whether what it learned in the dream works in reality.\n\nPlan on an afternoon. No soldering and no 3D printer. Just a shipping box, a hot glue gun, and parts from your ELEGOO kit."
+ },
+ {
+  "id": "how",
+  "title": "How it works",
+  "text": "Twenty-five times a second, Fulcrum does three things.\n\nIt senses. The ultrasonic sensor at the end of the track chirps at the ball, like a bat, and times the echo to measure how far away it is.\n\nIt thinks. A small neural network, two layers of sixteen artificial neurons, looks at where the ball is, how fast it's rolling, and where you want it, and picks a tilt.\n\nAnd it acts. The servo pushes a paperclip rod that tilts the track.\n\nThe network starts out knowing nothing. It learns by reinforcement learning, which is trial and error with a score, inside a simulator that deliberately gets the physics a little wrong, in a different way, every single practice run. That is how a brain trained in a dream can cope with whatever your real cardboard does."
+ },
+ {
+  "id": "parts",
+  "title": "What you need",
+  "text": "Here's what comes out of the kit. The Arduino board and its cable. The big breadboard. The power supply module and the nine volt wall adapter. The blue servo motor, with its little bag of plastic arms. The ultrasonic sensor, the one with two silver eyes. The G Y five twenty-one motion board. The eight by eight L E D matrix. The infrared receiver and its remote. The active buzzer: it's the one with a sticker on top and a sealed black bottom. One knob, one hundred microfarad capacitor, about fourteen jumper wires, and thirteen female-to-male wires.\n\nFrom around the house: a cardboard shipping box, a ping-pong ball, two bamboo skewers, a drinking straw, a big paperclip, a hot glue gun, a box cutter, a ruler, and some double-sided tape.\n\nOne thing people forget. Your MacBook has U S B C ports, and the kit's cable ends in the older, bigger U S B A plug. So you'll need a small adapter."
+ },
+ {
+  "id": "cut",
+  "title": "Cut the cardboard",
+  "text": "Start by cutting the cardboard. Everything comes from one box.\n\nThe base is fifty-two by sixteen centimeters, and the track strip is forty-four by seven. Cut the track so the little ridges inside the cardboard run the long way. That's what keeps it straight.\n\nThe smaller pieces are on the printable templates: four saddles, two towers and their braces, the sensor plate, the far wall, and the servo post with its brace. Print them at actual size, check the five centimeter bar with your ruler, then trace and cut. Use a sharp blade against a ruler, and make a few light passes instead of one hard one."
+ },
+ {
+  "id": "fold",
+  "title": "Fold the track",
+  "text": "Now the track. Draw a line down the middle of the forty-four centimeter strip, and score it: press the back of a butter knife along the line, against a ruler. Then fold it into a V with a right angle, like a book opened halfway.\n\nThe ball will roll in the bottom of that V. If you have clear packing tape, lay a strip down the inside of each face. It gives the ball a smoother, more even ride."
+ },
+ {
+  "id": "saddles",
+  "title": "Saddles and straw",
+  "text": "Saddles hold the V's shape and carry everything else. Mark four lines across the bottom of the track, at five, twenty-two, twenty-nine and thirty-nine centimeters, measured from the end that will hold the sensor.\n\nBefore you glue the saddle at twenty-two, glue the drinking straw along its bottom edge, cut to about ten and a half centimeters. That saddle is the pivot.\n\nIn the saddle at twenty-nine, poke a small hole with a skewer tip, about seven millimeters up from the bottom edge, in the middle. The push-rod will hook in there.\n\nNow glue all four saddles under the track, with each notch hugging the V."
+ },
+ {
+  "id": "ends",
+  "title": "Sensor plate and far wall",
+  "text": "The sonar plate closes the end of the track at zero, and the far wall closes the other end.\n\nTo place the sensor's holes, set the ball in the V right against the plate, and mark the plate at the height of the ball's center. Draw two circles, one point six centimeters across, centered one point three centimeters to the left and right of your mark. Cut them out. The sensor's two silver cans will poke through them, right at ball height.\n\nGlue the plate across the end with its bottom edge about a centimeter below the fold, then glue the far wall across the other end."
+ },
+ {
+  "id": "towers",
+  "title": "Towers",
+  "text": "Two towers hold the pivot. In each tower, poke a hole for the skewer one and a half centimeters below the top, in the middle.\n\nGlue the towers upright onto the base, facing each other, ten point seven centimeters apart, centered along the base. Here's a trick: before the glue sets, slide a skewer through both holes so they line up.\n\nThen glue a triangle brace against the inside face of each tower, along the edge nearest the sonar end, to keep it standing straight."
+ },
+ {
+  "id": "hang",
+  "title": "Hang the beam",
+  "text": "Now hang the beam. Push the skewer through the first tower, through the straw under the pivot saddle, and out through the second tower.\n\nGive the beam a nudge. It should rock freely and settle without sticking. If it rubs, trim the straw a little. Cut the skewer so about a centimeter sticks out on each side.\n\nThat's the beam. The servo comes later, after the electronics are tested."
+ },
+ {
+  "id": "power",
+  "title": "Power",
+  "text": "Electronics next, on the table, before anything goes on the robot. If something's wired wrong, it's easy to fix here.\n\nFirst, power. Plug the power supply module into the left end of the breadboard, so its minus pins sit on the blue stripes and its plus pins on the red stripes. Set the jumper on the top side to five volts, and move the bottom one to off.\n\nThe top rail will feed the servo, which is hungry and electrically noisy. The bottom rail will carry the Arduino's own clean five volts for the sensors.\n\nRun a red wire from the Arduino's five volt pin to the bottom red rail, and a black wire from its ground pin to the bottom blue rail. Finally, one black wire from the top blue rail to the bottom blue rail, so both supplies share a ground."
+ },
+ {
+  "id": "servo",
+  "title": "Servo",
+  "text": "The servo. First, the capacitor. It's a small reservoir that smooths out the servo's sudden gulps of current. Its longer leg goes in the top red rail, and the leg beside the stripe goes in the top blue rail. Polarity matters here.\n\nThen plug three jumpers into the servo's connector: brown to the top blue rail, red to the top red rail, and orange to Arduino pin nine."
+ },
+ {
+  "id": "sonar",
+  "title": "Ultrasonic sensor",
+  "text": "The ultrasonic sensor will ride on the robot, so use female-to-male wires. The female ends slide onto the sensor's pins.\n\nV C C goes to the bottom red rail. Ground goes to the bottom blue rail. Trig goes to pin seven, and Echo to pin eight. Trig tells the sensor to chirp, and Echo reports how long the chirp took to come back."
+ },
+ {
+  "id": "gyro",
+  "title": "Motion sensor",
+  "text": "The G Y five twenty-one board feels which way is down. Fulcrum uses it during calibration, to learn exactly how far each servo movement tilts the beam.\n\nFour female-to-male wires. V C C to the bottom red rail, ground to the bottom blue rail, S C L to A five, and S D A to A four. Leave the other four pins empty.\n\nSome kits ship this board with a different chip on it. The firmware recognizes both."
+ },
+ {
+  "id": "knob",
+  "title": "Knob",
+  "text": "The knob sets where you want the ball. Push its three legs into three different columns of the breadboard.\n\nWire the left leg to the bottom blue rail, the right leg to the bottom red rail, and the middle leg to A zero. If turning it moves the target the wrong way, just swap the two outer wires."
+ },
+ {
+  "id": "face",
+  "title": "LED face",
+  "text": "The L E D matrix is Fulcrum's face. Female-to-male wires again.\n\nV C C to the bottom red rail. Ground to the bottom blue rail. D in to pin eleven. C S to pin ten. And clock to pin thirteen."
+ },
+ {
+  "id": "remote",
+  "title": "Remote receiver",
+  "text": "The infrared receiver lets you drive Fulcrum with the remote. Its pins are labeled G, R, and Y. Plug it into the breadboard with its dark dome facing out toward you.\n\nG goes to the bottom blue rail, R goes to the bottom red rail, and Y goes to pin two."
+ },
+ {
+  "id": "buzzer",
+  "title": "Buzzer",
+  "text": "Last, the buzzer, so Fulcrum can chirp. Use the active buzzer: it has a sticker on top and a sealed black bottom.\n\nIts longer leg, marked plus, connects to pin three. The other leg connects to the bottom blue rail. That's every wire."
+ },
+ {
+  "id": "check",
+  "title": "Check the wiring",
+  "text": "Before you plug anything in, compare your board with the full diagram and the pin table. Look hard at three things.\n\nThe capacitor's stripe faces the blue rail.\n\nThe power module's plus and minus line up with the red and blue stripes.\n\nAnd nothing from the bottom rails touches the top red rail. The top red rail belongs to the servo alone."
+ },
+ {
+  "id": "gym",
+  "title": "Open the Gym",
+  "text": "Time to bring it to life. Everything happens in the Fulcrum Gym, a web app that runs on your Mac.\n\nIn the fulcrum folder, double-click Fulcrum Gym dot command. A small Terminal window opens, and the Gym appears in Chrome. Leave that window open while you work.\n\nThe Gym has three tabs. Dream, where the brain learns. Exam, where it's tested. And Robot, which talks to the real thing."
+ },
+ {
+  "id": "firmware",
+  "title": "Install the firmware",
+  "text": "Plug the Arduino into your Mac. In the Gym's Robot tab, click Connect, and choose the port with U S B modem or U S B serial in its name.\n\nThen click Install firmware. The Gym restarts the Arduino into its loader and writes the program, which takes about ten seconds. When it's done, Fulcrum beeps twice and says hello.\n\nYou only do this once. After that, new brains travel over the same cable in a couple of seconds."
+ },
+ {
+  "id": "checkparts",
+  "title": "Test every part",
+  "text": "Now test every part, while it's still easy to fix. Switch on the power module, with the nine volt adapter plugged in.\n\nWave your hand over the ultrasonic sensor and watch the sonar reading change. The gyro should say it was found. Turn the knob from end to end. Press a button on the remote. Click Beep, and click Light every L E D.\n\nThen click Tilt toward sensor, Level, and Tilt away, and watch the servo's shaft turn. If a part doesn't respond, the troubleshooting table at the end of this guide lists the usual causes."
+ },
+ {
+  "id": "servomount",
+  "title": "Servo and push-rod",
+  "text": "Back to the cardboard. Click Level in the Gym, so the servo holds its exact middle.\n\nGlue the servo post onto the base just behind the track, as shown, and glue the servo to its front face, with the shaft pointing toward you. Push the long single arm onto the shaft, pointing toward the far wall, as close to horizontal as the teeth allow.\n\nStraighten the paperclip. Bend a small hook at one end, thread it through the arm's outermost hole, and squeeze the hook closed. Do the same at the top, through the hole in the saddle at twenty-nine. With the servo at Level, the rod should hang straight and the beam should sit close to level. Don't glue these joints. They need to pivot."
+ },
+ {
+  "id": "sensors",
+  "title": "Mount the sensors",
+  "text": "Now mount the passengers. Push the ultrasonic sensor's silver cans through the holes in the end plate, and tape the board in place.\n\nStick the motion sensor board to the outside of the track, near fifteen centimeters, with double-sided tape. Any orientation works.\n\nStick the L E D matrix to the front tower, below the skewer, facing you. Then route the wires so they hang loosely. The beam has to swing without tugging on anything."
+ },
+ {
+  "id": "calibrate",
+  "title": "Calibrate",
+  "text": "Put the ball on the track, and click Calibrate. For the next fifty seconds, Fulcrum teaches itself about its own body.\n\nFirst it sweeps the servo slowly while the motion sensor measures the beam, so it knows exactly how many degrees each movement makes. Then it rolls the ball one way, back, and the first way again, to learn which direction is which. Last, it holds the ball in the middle and adjusts until it finds true level, which is almost never where the cardboard looks level.\n\nEverything it learns is saved inside the Arduino."
+ },
+ {
+  "id": "train",
+  "title": "Train a brain",
+  "text": "Now the fun part. Open the Dream tab and press Start training.\n\nSixty-four simulated Fulcrums start practicing at once, each with its own made-up physics: slick or sticky track, snappy or sluggish servo, a noisy sensor, a crooked level.\n\nWatch the learning curve. At first it climbs, because the brain is exploring. Within a minute it drops below the gray line, the score of a classic hand-tuned controller. The map shows what the brain decided to do in every situation, and the dot is the live dream, spiraling into the target. A couple of minutes of training is plenty."
+ },
+ {
+  "id": "exam",
+  "title": "The exam",
+  "text": "Before a brain goes to the robot, it takes an exam. Open the Exam tab, choose Best so far, and run it.\n\nThirty-two worlds it has never seen. The brain being graded is the compressed copy, five hundred forty-four bytes, exactly what will run on the Arduino. If it passes most of the worlds, it's ready."
+ },
+ {
+  "id": "send",
+  "title": "Send the brain",
+  "text": "Switch to the Robot tab and click Send best brain. The Gym breaks the brain into small pieces, the Arduino checks every one, and stores it in memory that survives power-off.\n\nChoose Brain mode, set the ball on the track, and let go."
+ },
+ {
+  "id": "play",
+  "title": "Play with it",
+  "text": "Turn the knob, and the ball follows. Press one through nine on the remote to send it to fixed spots, and zero to go back to the knob. Flick the ball, and watch the brain catch it.\n\nThe function button switches between the learned brain, a classic controller, and a mode where the knob tilts the beam directly, and you are the brain. It's harder than it looks."
+ },
+ {
+  "id": "dreamreal",
+  "title": "Dream vs reality",
+  "text": "Finally, the question this whole project asks. Does the dream match reality?\n\nIn the Robot tab, run the dream versus reality test. Fulcrum runs the same twenty-second routine on the real track and in a simulated one, with the same brain, and draws both.\n\nThe gap between the lines is the reality gap: the thing robotics researchers spend whole careers trying to close."
+ },
+ {
+  "id": "experiments",
+  "title": "Experiments",
+  "text": "A few experiments to try.\n\nTurn off Train for the real world, train a new brain, and send it to the robot. It aces its perfect dream, and struggles on real cardboard.\n\nSwap the ping-pong ball for a golf ball, and see whether the brain copes.\n\nAnd train a brain from scratch while you watch the map. The moment the clean diagonal appears is the moment it figured out balancing."
+ }
+]

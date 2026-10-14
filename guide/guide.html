@@ -1,0 +1,566 @@
+<title>Fulcrum</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>/*GUIDE_CSS*/</style>
+
+<div class="page">
+  <nav class="toc" id="toc" aria-label="Steps">
+    <a class="tw" href="#top">FULCRUM</a>
+    <button class="toc-toggle" id="toc-toggle" aria-expanded="false">Steps <span aria-hidden="true">▾</span></button>
+    <div class="lists" id="toc-lists"></div>
+    <div class="progress" aria-hidden="true"><span id="prog-bar"></span></div>
+    <div class="progress-label" id="prog-label">0 of 30 steps done</div>
+  </nav>
+
+  <main class="doc">
+    <header class="hero" id="top">
+      <p class="kicker">An ELEGOO starter kit project · reinforcement learning · sim to real</p>
+      <h1>FULCRUM</h1>
+      <p class="tagline">A cardboard robot that learns to balance a ball in a dream, then does it for real.</p>
+      <ul class="facts">
+        <li>about 3 hours</li><li>no soldering, no 3D printer</li><li>30 narrated steps, 16 minutes</li><li>brain trains in about a minute</li>
+      </ul>
+      <div class="actions">
+        <button class="btn voice" id="play-all"><span aria-hidden="true">▶</span> Play the narrated walkthrough</button>
+        <a class="btn primary" href="gym/index.html">Open the Gym</a>
+      </div>
+      <div class="viewer" id="viewer"><img src="img/hero-wide.png" alt="The finished Fulcrum: a cardboard V-track on a skewer pivot between two towers, a blue servo with a paperclip push-rod, an ultrasonic sensor at the left end, an LED face, and a ping-pong ball on the track."><span class="vhint" id="vhint">the finished robot</span></div>
+    </header>
+
+    <!-- ===================================================== intro -->
+    <section class="step" id="intro" data-audio="intro" data-n="0.1">
+      <div class="step-head"><span class="step-no">0.1</span><h3>Welcome</h3><button class="listen" data-audio="intro"></button></div>
+      <p>You'll build a robot from a shipping box and your ELEGOO kit that keeps a ping-pong ball wherever you point, on a track that tilts. Nobody writes its balancing rules. A small neural network learns them by <strong>reinforcement learning</strong> in a simulator you can watch, the <strong>Gym</strong>. You then send that brain down the USB cable into the Arduino and see whether what it learned in the dream holds up in reality.</p>
+      <p class="note">Everything here was tested before you build it: the firmware was run on a computer against the simulated robot, calibration was tried on hundreds of deliberately crooked simulated builds, and the brain you'll train beats a hand-tuned classic controller. What I couldn't test is your actual cardboard. That's the experiment.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="intro"> Done</label></div>
+    </section>
+
+    <section class="step" id="how" data-audio="how" data-n="0.2">
+      <div class="step-head"><span class="step-no">0.2</span><h3>How it works</h3><button class="listen" data-audio="how"></button></div>
+      <div class="diagram" aria-label="Diagram: twenty-five times a second, sense, think, act. Learning: dream, exam, USB, reality.">
+        <svg viewBox="0 0 880 330" role="img" aria-labelledby="dg-t">
+          <title id="dg-t">Sense, think, act, and how the brain gets to the robot</title>
+          <defs>
+            <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-3)"/></marker>
+            <marker id="ahb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--ball)"/></marker>
+          </defs>
+          <text x="0" y="18" fill="var(--ink-3)" font-family="var(--font-mono)" font-size="12" letter-spacing="1.6">25 TIMES A SECOND, ON THE ARDUINO</text>
+          <g font-family="var(--font-body)">
+            <rect x="0" y="34" width="250" height="96" rx="12" fill="var(--paper-2)" stroke="var(--line-2)"/>
+            <text x="18" y="62" fill="var(--pcb)" font-family="var(--font-mono)" font-size="12" font-weight="600" letter-spacing="1.4">SENSE</text>
+            <text x="18" y="86" fill="var(--ink)" font-size="15">The sonar chirps and times</text>
+            <text x="18" y="106" fill="var(--ink)" font-size="15">the echo: ball at 18.4 cm,</text>
+            <text x="18" y="124" fill="var(--ink-2)" font-size="13">rolling 6 cm/s</text>
+            <rect x="315" y="34" width="250" height="96" rx="12" fill="var(--paper-2)" stroke="var(--line-2)"/>
+            <text x="333" y="62" fill="var(--pcb)" font-family="var(--font-mono)" font-size="12" font-weight="600" letter-spacing="1.4">THINK</text>
+            <text x="333" y="86" fill="var(--ink)" font-size="15">6 numbers in, 16 + 16</text>
+            <text x="333" y="106" fill="var(--ink)" font-size="15">neurons, 1 tilt out</text>
+            <text x="333" y="124" fill="var(--ink-2)" font-size="13">about 10 ms of arithmetic</text>
+            <rect x="630" y="34" width="250" height="96" rx="12" fill="var(--paper-2)" stroke="var(--line-2)"/>
+            <text x="648" y="62" fill="var(--pcb)" font-family="var(--font-mono)" font-size="12" font-weight="600" letter-spacing="1.4">ACT</text>
+            <text x="648" y="86" fill="var(--ink)" font-size="15">The servo pushes the rod;</text>
+            <text x="648" y="106" fill="var(--ink)" font-size="15">the track tilts 2.3°</text>
+            <text x="648" y="124" fill="var(--ink-2)" font-size="13">and the ball rolls</text>
+          </g>
+          <line x1="254" y1="82" x2="309" y2="82" stroke="var(--ink-3)" stroke-width="2" marker-end="url(#ah)"/>
+          <line x1="569" y1="82" x2="624" y2="82" stroke="var(--ink-3)" stroke-width="2" marker-end="url(#ah)"/>
+          <path d="M755,134 C755,170 125,170 125,138" fill="none" stroke="var(--ink-3)" stroke-width="2" marker-end="url(#ah)"/>
+          <text x="440" y="176" fill="var(--ink-3)" font-family="var(--font-mono)" font-size="12" text-anchor="middle">the ball moves, the sonar sees it, again</text>
+
+          <text x="0" y="222" fill="var(--ink-3)" font-family="var(--font-mono)" font-size="12" letter-spacing="1.6">HOW THE BRAIN GETS THERE</text>
+          <g font-family="var(--font-body)">
+            <rect x="0" y="236" width="196" height="84" rx="12" fill="var(--ball-wash)" stroke="var(--ball)"/>
+            <text x="16" y="262" fill="var(--ball)" font-family="var(--font-mono)" font-size="12" font-weight="600" letter-spacing="1.4">DREAM</text>
+            <text x="16" y="284" fill="var(--ink)" font-size="14">64 simulated robots,</text>
+            <text x="16" y="303" fill="var(--ink)" font-size="14">each a bit different</text>
+            <rect x="228" y="236" width="196" height="84" rx="12" fill="var(--paper-2)" stroke="var(--line-2)"/>
+            <text x="244" y="262" fill="var(--pcb)" font-family="var(--font-mono)" font-size="12" font-weight="600" letter-spacing="1.4">EXAM</text>
+            <text x="244" y="284" fill="var(--ink)" font-size="14">32 worlds it has</text>
+            <text x="244" y="303" fill="var(--ink)" font-size="14">never seen</text>
+            <rect x="456" y="236" width="196" height="84" rx="12" fill="var(--paper-2)" stroke="var(--line-2)"/>
+            <text x="472" y="262" fill="var(--pcb)" font-family="var(--font-mono)" font-size="12" font-weight="600" letter-spacing="1.4">USB CABLE</text>
+            <text x="472" y="284" fill="var(--ink)" font-size="14">544 bytes, checked</text>
+            <text x="472" y="303" fill="var(--ink)" font-size="14">piece by piece</text>
+            <rect x="684" y="236" width="196" height="84" rx="12" fill="var(--paper-2)" stroke="var(--kraft-2)"/>
+            <text x="700" y="262" fill="var(--kraft-2)" font-family="var(--font-mono)" font-size="12" font-weight="600" letter-spacing="1.4">REALITY</text>
+            <text x="700" y="284" fill="var(--ink)" font-size="14">your cardboard</text>
+            <text x="700" y="303" fill="var(--ink)" font-size="14">robot</text>
+          </g>
+          <line x1="198" y1="278" x2="223" y2="278" stroke="var(--ball)" stroke-width="2" marker-end="url(#ahb)"/>
+          <line x1="426" y1="278" x2="451" y2="278" stroke="var(--ink-3)" stroke-width="2" marker-end="url(#ah)"/>
+          <line x1="654" y1="278" x2="679" y2="278" stroke="var(--ink-3)" stroke-width="2" marker-end="url(#ah)"/>
+        </svg>
+      </div>
+      <p>The trick that makes a dream-trained brain survive reality is <strong>domain randomization</strong>. Every practice run, the simulator re-rolls the robot's quirks: how sticky the track is, how slow and sloppy the servo is, how noisy the sonar is, how crooked "level" is. A brain that balances in all of those worlds has a good chance in yours.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="how"> Done</label></div>
+    </section>
+
+    <section class="step" id="parts" data-audio="parts" data-n="0.3">
+      <div class="step-head"><span class="step-no">0.3</span><h3>What you need</h3><button class="listen" data-audio="parts"></button></div>
+      <div class="checklist" id="checklist">
+        <div>
+          <h4>From the kit (names as on the lid)</h4>
+          <ul>
+            <li><label><input type="checkbox" data-kit="uno"><span>UNO R3 Controller Board</span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="usb"><span>USB Cable</span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="bb"><span>830 Tie-Points Breadboard</span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="psu"><span>Power Supply Module</span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="adapter"><span>9V1A Adapter</span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="servo"><span>Servo Motor SG90 <span class="sub">with its bag of plastic arms (horns)</span></span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="sonar"><span>Ultrasonic Sensor <span class="sub">the one with two silver "eyes"</span></span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="gy"><span>GY-521 Module</span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="max"><span>MAX7219 Module <span class="sub">the 8×8 LED matrix</span></span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="ir"><span>IR Receiver Module and Remote Control</span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="buz"><span>Active Buzzer <span class="sub">sticker on top, sealed black bottom</span></span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="pot"><span>Potentiometer 10K <span class="sub">the knob</span></span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="cap"><span>100uF Electrolytic Capacitor</span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="jump"><span>Breadboard Jumper Wire</span><span class="q">×14</span></label></li>
+            <li><label><input type="checkbox" data-kit="fm"><span>Female-to-Male Dupont Wire</span><span class="q">×13</span></label></li>
+          </ul>
+        </div>
+        <div>
+          <h4>From home</h4>
+          <ul>
+            <li><label><input type="checkbox" data-kit="box"><span>Corrugated cardboard <span class="sub">one medium shipping box</span></span><span class="q"></span></label></li>
+            <li><label><input type="checkbox" data-kit="ball"><span>Ping-pong ball <span class="sub">or a golf ball, or a small rubber ball</span></span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="skewer"><span>Bamboo skewers</span><span class="q">×2</span></label></li>
+            <li><label><input type="checkbox" data-kit="straw"><span>Plastic drinking straw</span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="clip"><span>Large paperclip</span><span class="q">×1</span></label></li>
+            <li><label><input type="checkbox" data-kit="glue"><span>Hot glue gun and sticks</span><span class="q"></span></label></li>
+            <li><label><input type="checkbox" data-kit="knife"><span>Box cutter or sturdy scissors, ruler, pencil</span><span class="q"></span></label></li>
+            <li><label><input type="checkbox" data-kit="tape"><span>Double-sided tape <span class="sub">or poster putty; clear packing tape is a bonus</span></span><span class="q"></span></label></li>
+            <li><label><input type="checkbox" data-kit="usbc"><span>USB-C to USB-A adapter <span class="sub">your MacBook's ports are USB-C; the kit cable isn't</span></span><span class="q">×1</span></label></li>
+          </ul>
+        </div>
+      </div>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="parts"> Done</label></div>
+    </section>
+
+    <!-- ===================================================== PART 1 -->
+    <div class="part-head" id="part1"><div class="pk">Part 1</div><h2>Build the beam</h2><p>All cardboard. Hot glue sets in about a minute; hold each joint square until it does. The end with the sensor is "the sonar end" and is at 0 cm on every measurement.</p></div>
+
+    <section class="step" id="cut" data-audio="cut" data-n="1.1">
+      <div class="step-head"><span class="step-no">1.1</span><h3>Cut the cardboard</h3><button class="listen" data-audio="cut"></button></div>
+      <figure class="fig framed"><img src="img/templates-preview.png" alt="Printable cut templates with the small parts drawn at actual size." loading="lazy"><figcaption>Three letter-size pages. Print at 100% (actual size), then check the 5 cm bar with a ruler.</figcaption></figure>
+      <div class="dl-row"><button class="btn primary" id="save-templates" type="button">Save the cut templates (PDF)</button><a class="btn" href="https://github.com/michaellomuscio/fulcrum/blob/main/guide/fulcrum-cut-templates.pdf" target="_blank" rel="noopener">Open them on GitHub</a></div>
+      <p class="dl-note" id="save-note">The same file is <code>guide/fulcrum-cut-templates.pdf</code> in the fulcrum folder.</p>
+      <ol class="instr">
+        <li>Cut the <strong>base</strong>, 52 × 16 cm.</li>
+        <li>Cut the <strong>track</strong> strip, 44 × 7 cm, with the corrugation (the ridges inside the cardboard) running the 44 cm way. That keeps it straight.</li>
+        <li>Print the templates, cut them out, trace onto cardboard, and cut: 4 saddles, 2 towers, 2 tower braces, the sonar plate, the far wall, the servo post and its brace.</li>
+      </ol>
+      <p class="note"><strong>Clean cuts:</strong> several light passes with a sharp blade against a metal ruler beat one hard push. Cut on something you don't mind scratching.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="cut"> Done</label></div>
+    </section>
+
+    <section class="step" id="fold" data-audio="fold" data-n="1.2">
+      <div class="step-head"><span class="step-no">1.2</span><h3>Fold the track</h3><button class="listen" data-audio="fold"></button></div>
+      <figure class="fig"><img src="img/build-1-fold.png" alt="The 44 by 7 cm strip scored down its middle and folded into a 90 degree V." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Draw a line down the middle of the track strip, 3.5 cm from each long edge.</li>
+        <li>Score it: press the back of a butter knife (or a dry ballpoint) firmly along the line, against a ruler.</li>
+        <li>Fold along the score into a V with a right angle, score on the outside.</li>
+        <li>Optional: run clear packing tape down the inside of each face for a smoother, more even roll.</li>
+      </ol>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="fold"> Done</label></div>
+    </section>
+
+    <section class="step" id="saddles" data-audio="saddles" data-n="1.3">
+      <div class="step-head"><span class="step-no">1.3</span><h3>Saddles and straw</h3><button class="listen" data-audio="saddles"></button></div>
+      <figure class="fig"><img src="img/build-2-saddles.png" alt="The track seen from below with four notched saddles at 5, 22, 29 and 39 cm; a straw across the 22 cm saddle and a small hole in the 29 cm saddle." loading="lazy"></figure>
+      <ol class="instr">
+        <li>On the outside of the V, mark across it at <strong>5, 22, 29 and 39 cm</strong> from the sonar end.</li>
+        <li>Cut a straw to <strong>10.5 cm</strong> and glue it along the bottom edge of one saddle, centered. That's the <strong>pivot saddle</strong>.</li>
+        <li>In a second saddle, poke a small hole <strong>7 mm above its bottom edge</strong>, centered, with a skewer tip. That's the <strong>push-rod saddle</strong>.</li>
+        <li>Glue the saddles on the marks with their notches hugging the V: pivot saddle at 22, push-rod saddle at 29, the plain ones at 5 and 39. The straw runs across the track.</li>
+      </ol>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="saddles"> Done</label></div>
+    </section>
+
+    <section class="step" id="ends" data-audio="ends" data-n="1.4">
+      <div class="step-head"><span class="step-no">1.4</span><h3>Sonar plate and far wall</h3><button class="listen" data-audio="ends"></button></div>
+      <figure class="fig"><img src="img/build-3-ends.png" alt="The sonar plate with two round holes across the sonar end of the track, and the far wall across the other end." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Hold the sonar plate across the sonar end, set the ball in the V against it, and mark the plate at the height of the ball's center.</li>
+        <li>Draw two <strong>1.6 cm circles</strong> centered 1.3 cm left and right of the mark (2.6 cm apart), and cut them out. The sensor's silver cans should just fit.</li>
+        <li>Glue the plate across the end, centered on the V, its bottom edge about 1 cm below the fold.</li>
+        <li>Glue the far wall across the other end.</li>
+      </ol>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="ends"> Done</label></div>
+    </section>
+
+    <section class="step" id="towers" data-audio="towers" data-n="1.5">
+      <div class="step-head"><span class="step-no">1.5</span><h3>Towers</h3><button class="listen" data-audio="towers"></button></div>
+      <figure class="fig"><img src="img/build-4-towers.png" alt="Two cardboard towers standing on the base, 10.7 cm apart, each with a skewer hole 1.5 cm below the top and a triangular brace on its inside face." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Poke a skewer hole in each tower, <strong>1.5 cm below the top</strong>, centered.</li>
+        <li>Draw a line across the base at its middle (26 cm from either end). Glue the towers upright on that line, facing each other, <strong>10.7 cm apart</strong> (inside faces), centered across the base.</li>
+        <li>Before the glue sets, slide a skewer through both holes so they line up.</li>
+        <li>Glue a triangle brace against the <strong>inside</strong> face of each tower, along the edge nearest the sonar end. (On the outside they'd hang off the base.)</li>
+      </ol>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="towers"> Done</label></div>
+    </section>
+
+    <section class="step" id="hang" data-audio="hang" data-n="1.6">
+      <div class="step-head"><span class="step-no">1.6</span><h3>Hang the beam</h3><button class="listen" data-audio="hang"></button></div>
+      <figure class="fig"><img src="img/build-5-hang.png" alt="The track hanging on a skewer that passes through one tower, the straw, and the other tower." loading="lazy"></figure>
+      <ol class="instr">
+        <li>With the sonar end on your left, push a skewer through one tower, through the straw, and out the other tower.</li>
+        <li>Nudge the beam. It should rock freely and settle without sticking. If it rubs, trim the straw.</li>
+        <li>Trim the skewer so about 1 cm sticks out past each tower.</li>
+      </ol>
+      <p class="note">The servo goes on in Part 4, once the electronics have been tested.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="hang"> Done</label></div>
+    </section>
+
+    <!-- ===================================================== PART 2 -->
+    <div class="part-head" id="part2"><div class="pk">Part 2</div><h2>Wire the electronics</h2><p>Do this on the table, in front of the robot near the sonar end, with nothing plugged into your Mac or the wall. In each diagram the new wires are in full color and earlier ones are faded. Any hole on the correct rail works; the diagrams show a tidy layout that keeps everything in the left half of the board.</p></div>
+
+    <section class="step" id="power" data-audio="power" data-n="2.1">
+      <div class="step-head"><span class="step-no">2.1</span><h3>Power</h3><button class="listen" data-audio="power"></button></div>
+      <figure class="fig fig-wide"><img src="img/wire-1.svg" alt="Wiring diagram: the power supply module on the left end of the breadboard; Arduino 5V and GND to the bottom rails; a ground bridge between the blue rails." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Press the <strong>Power Supply Module</strong> onto the left end of the breadboard: its − pins on the blue stripes, + pins on the red stripes, DC jack facing out.</li>
+        <li>Top jumper on <strong>5V</strong>. Bottom jumper on <strong>OFF</strong>.</li>
+        <li>Red jumper: Arduino <strong>5V</strong> → bottom red (+) rail. Black jumper: Arduino <strong>GND</strong> → bottom blue (−) rail.</li>
+        <li>Black jumper: top blue rail → bottom blue rail, so both supplies share a ground.</li>
+      </ol>
+      <p class="note"><strong>Why two supplies:</strong> the servo pulls sudden bursts of current that would jolt the sensors' readings. The top rail (power module) feeds only the servo; the bottom rail (the Arduino's own 5 V) feeds everything else.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="power"> Done</label></div>
+    </section>
+
+    <section class="step" id="servo" data-audio="servo" data-n="2.2">
+      <div class="step-head"><span class="step-no">2.2</span><h3>Servo</h3><button class="listen" data-audio="servo"></button></div>
+      <figure class="fig fig-wide"><img src="img/wire-2.svg" alt="Wiring diagram: capacitor across the top rails; servo brown to top blue, red to top red, orange to pin 9." loading="lazy"></figure>
+      <div class="table-wrap"><table class="conn"><thead><tr><th>From</th><th>To</th></tr></thead><tbody>
+        <tr><td>Capacitor, long leg</td><td>top red (+) rail</td></tr>
+        <tr><td>Capacitor, striped leg</td><td>top blue (−) rail <strong>(polarity matters)</strong></td></tr>
+        <tr><td><span class="wire" style="background:#6b4423"></span>Servo brown</td><td>top blue (−) rail</td></tr>
+        <tr><td><span class="wire" style="background:#d22"></span>Servo red</td><td>top red (+) rail</td></tr>
+        <tr><td><span class="wire" style="background:#f39200"></span>Servo orange</td><td>Arduino <strong>pin 9</strong></td></tr>
+      </tbody></table></div>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="servo"> Done</label></div>
+    </section>
+
+    <section class="step" id="sonar" data-audio="sonar" data-n="2.3">
+      <div class="step-head"><span class="step-no">2.3</span><h3>Ultrasonic sensor</h3><button class="listen" data-audio="sonar"></button></div>
+      <figure class="fig fig-wide"><img src="img/wire-3.svg" alt="Wiring diagram: HC-SR04 VCC to bottom red rail, Trig to pin 7, Echo to pin 8, Gnd to bottom blue rail." loading="lazy"></figure>
+      <div class="table-wrap"><table class="conn"><thead><tr><th>Sensor pin</th><th>Female-to-male wire to</th></tr></thead><tbody>
+        <tr><td>VCC</td><td>bottom red (+) rail</td></tr><tr><td>Trig</td><td>Arduino <strong>pin 7</strong></td></tr><tr><td>Echo</td><td>Arduino <strong>pin 8</strong></td></tr><tr><td>Gnd</td><td>bottom blue (−) rail</td></tr>
+      </tbody></table></div>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="sonar"> Done</label></div>
+    </section>
+
+    <section class="step" id="gyro" data-audio="gyro" data-n="2.4">
+      <div class="step-head"><span class="step-no">2.4</span><h3>Motion sensor (GY-521)</h3><button class="listen" data-audio="gyro"></button></div>
+      <figure class="fig fig-wide"><img src="img/wire-4.svg" alt="Wiring diagram: GY-521 VCC and GND to the bottom rails, SCL to A5, SDA to A4." loading="lazy"></figure>
+      <div class="table-wrap"><table class="conn"><thead><tr><th>Board pin</th><th>Female-to-male wire to</th></tr></thead><tbody>
+        <tr><td>VCC</td><td>bottom red (+) rail</td></tr><tr><td>GND</td><td>bottom blue (−) rail</td></tr><tr><td>SCL</td><td>Arduino <strong>A5</strong></td></tr><tr><td>SDA</td><td>Arduino <strong>A4</strong></td></tr><tr><td>XDA, XCL, AD0, INT</td><td>nothing</td></tr>
+      </tbody></table></div>
+      <p class="note">ELEGOO ships this board with either an MPU-6050 or a QMI8658 chip. The firmware finds whichever you have.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="gyro"> Done</label></div>
+    </section>
+
+    <section class="step" id="knob" data-audio="knob" data-n="2.5">
+      <div class="step-head"><span class="step-no">2.5</span><h3>Knob</h3><button class="listen" data-audio="knob"></button></div>
+      <figure class="fig fig-wide"><img src="img/wire-5.svg" alt="Wiring diagram: potentiometer legs in three columns; left to the bottom blue rail, middle to A0, right to the bottom red rail." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Push the knob's three legs into three different columns (some knobs need every other column).</li>
+        <li>Left leg → bottom blue rail. Middle leg → <strong>A0</strong>. Right leg → bottom red rail.</li>
+      </ol>
+      <p class="note">If turning the knob moves the target the opposite way from what you'd like, swap the two outer wires.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="knob"> Done</label></div>
+    </section>
+
+    <section class="step" id="face" data-audio="face" data-n="2.6">
+      <div class="step-head"><span class="step-no">2.6</span><h3>LED face</h3><button class="listen" data-audio="face"></button></div>
+      <figure class="fig fig-wide"><img src="img/wire-6.svg" alt="Wiring diagram: MAX7219 module VCC and GND to the bottom rails, DIN to pin 11, CS to pin 10, CLK to pin 13." loading="lazy"></figure>
+      <div class="table-wrap"><table class="conn"><thead><tr><th>Matrix pin</th><th>Female-to-male wire to</th></tr></thead><tbody>
+        <tr><td>VCC</td><td>bottom red (+) rail</td></tr><tr><td>GND</td><td>bottom blue (−) rail</td></tr><tr><td>DIN</td><td>Arduino <strong>pin 11</strong></td></tr><tr><td>CS</td><td>Arduino <strong>pin 10</strong></td></tr><tr><td>CLK</td><td>Arduino <strong>pin 13</strong></td></tr>
+      </tbody></table></div>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="face"> Done</label></div>
+    </section>
+
+    <section class="step" id="remote" data-audio="remote" data-n="2.7">
+      <div class="step-head"><span class="step-no">2.7</span><h3>Remote receiver</h3><button class="listen" data-audio="remote"></button></div>
+      <figure class="fig fig-wide"><img src="img/wire-7.svg" alt="Wiring diagram: IR receiver module pins G, R, Y in three columns; G to the bottom blue rail, R to the bottom red rail, Y to pin 2." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Plug the receiver into three columns with its dark dome facing the front edge of the breadboard.</li>
+        <li><strong>G</strong> → bottom blue rail. <strong>R</strong> → bottom red rail. <strong>Y</strong> → Arduino <strong>pin 2</strong>.</li>
+      </ol>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="remote"> Done</label></div>
+    </section>
+
+    <section class="step" id="buzzer" data-audio="buzzer" data-n="2.8">
+      <div class="step-head"><span class="step-no">2.8</span><h3>Buzzer</h3><button class="listen" data-audio="buzzer"></button></div>
+      <figure class="fig fig-wide"><img src="img/wire-8.svg" alt="Wiring diagram: active buzzer plus leg to pin 3, minus leg to the bottom blue rail." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Use the <strong>active</strong> buzzer: sticker on top, sealed black bottom. (The passive one shows a green circuit board underneath.)</li>
+        <li>Longer leg (marked +) → Arduino <strong>pin 3</strong>. Other leg → bottom blue rail.</li>
+      </ol>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="buzzer"> Done</label></div>
+    </section>
+
+    <section class="step" id="check" data-audio="check" data-n="2.9">
+      <div class="step-head"><span class="step-no">2.9</span><h3>Check the wiring</h3><button class="listen" data-audio="check"></button></div>
+      <figure class="fig fig-wide"><img src="img/wire-all.svg" alt="The complete wiring diagram." loading="lazy"></figure>
+      <div class="table-wrap"><table class="conn"><thead><tr><th>Arduino pin</th><th>Goes to</th></tr></thead><tbody>
+        <tr><td>D2</td><td>remote receiver Y</td></tr><tr><td>D3</td><td>buzzer +</td></tr><tr><td>D7</td><td>sonar Trig</td></tr><tr><td>D8</td><td>sonar Echo</td></tr><tr><td>D9</td><td>servo orange</td></tr><tr><td>D10</td><td>LED matrix CS</td></tr><tr><td>D11</td><td>LED matrix DIN</td></tr><tr><td>D13</td><td>LED matrix CLK</td></tr><tr><td>A0</td><td>knob middle leg</td></tr><tr><td>A4</td><td>GY-521 SDA</td></tr><tr><td>A5</td><td>GY-521 SCL</td></tr><tr><td>5V, GND</td><td>bottom red and blue rails</td></tr>
+      </tbody></table></div>
+      <p class="note warn"><strong>Three things to double-check:</strong> the capacitor's stripe faces the blue rail; the power module's + and − line up with the red and blue stripes; and nothing from the bottom rails touches the top red rail, which belongs to the servo alone.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="check"> Done</label></div>
+    </section>
+
+    <!-- ===================================================== PART 3 -->
+    <div class="part-head" id="part3"><div class="pk">Part 3</div><h2>Bring it to life</h2><p>Everything from here on happens in the <strong>Gym</strong>, a web app in the <code>fulcrum</code> folder on your Mac. It has three tabs: <em>Dream</em> (training), <em>Exam</em> (testing) and <em>Robot</em> (the USB connection).</p></div>
+
+    <section class="step" id="gym" data-audio="gym" data-n="3.1">
+      <div class="step-head"><span class="step-no">3.1</span><h3>Open the Gym</h3><button class="listen" data-audio="gym"></button></div>
+      <figure class="shot"><img src="img/gym-dream.png" alt="The Gym's Dream tab: a simulated Fulcrum, practice thumbnails, a learning curve and the brain's decision map." loading="lazy"></figure>
+      <ol class="instr">
+        <li>In Finder, open the <code>fulcrum</code> folder and double-click <strong>Fulcrum Gym.command</strong>. (Not on a Mac? In that folder run <code>python3 -m http.server 8642</code> and open <code>localhost:8642/gym/</code> in Chrome.)</li>
+        <li>A small Terminal window opens and Chrome shows the Gym at <code>localhost:8642/gym/</code>. Keep the Terminal window open while you work.</li>
+      </ol>
+      <p class="note">The <a href="gym/index.html">copy of the Gym inside this guide</a> can train, run exams and drive a <strong>virtual robot</strong>, but only the copy on your Mac can reach the USB port. Chrome is required for USB (Safari doesn't support it).</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="gym"> Done</label></div>
+    </section>
+
+    <section class="step" id="firmware" data-audio="firmware" data-n="3.2">
+      <div class="step-head"><span class="step-no">3.2</span><h3>Install the firmware</h3><button class="listen" data-audio="firmware"></button></div>
+      <figure class="shot"><img src="img/gym-firmware.png" alt="The Robot tab after connecting and installing the firmware." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Plug the Arduino into your Mac (through the USB-C adapter).</li>
+        <li>In the <strong>Robot</strong> tab, click <strong>Connect</strong> and pick the port named like <code>usbmodem…</code> or <code>usbserial…</code>.</li>
+        <li>Click <strong>Install firmware</strong>. About ten seconds later Fulcrum beeps twice and the status line says hello.</li>
+      </ol>
+      <p class="note"><strong>Plan B, the Arduino IDE:</strong> open <code>fulcrum/firmware/Fulcrum/Fulcrum.ino</code>, choose <em>Tools › Board › Arduino Uno</em> and your port, then <em>Upload</em>. No extra libraries are needed. Or flash it from Terminal with <code>arduino-cli</code> (see the README).</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="firmware"> Done</label></div>
+    </section>
+
+    <section class="step" id="checkparts" data-audio="checkparts" data-n="3.3">
+      <div class="step-head"><span class="step-no">3.3</span><h3>Test every part</h3><button class="listen" data-audio="checkparts"></button></div>
+      <figure class="shot"><img src="img/gym-checks.png" alt="The Check the parts panel with live sonar, gyro, knob and remote readings." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Plug the 9 V adapter into the power module and press its button (its LED lights).</li>
+        <li>Wave a hand over the sonar: the reading changes. The gyro says <em>found</em>. Turn the knob end to end. Press any remote button.</li>
+        <li>Click <strong>Beep</strong> and <strong>Light every LED</strong>.</li>
+        <li>Click <strong>Tilt toward sensor</strong>, <strong>Level</strong> and <strong>Tilt away</strong>: the servo's shaft turns.</li>
+      </ol>
+      <p class="note">Something silent? See <a href="#trouble">Troubleshooting</a>. Fixing it now, with everything on the table, is much easier than later.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="checkparts"> Done</label></div>
+    </section>
+
+    <!-- ===================================================== PART 4 -->
+    <div class="part-head" id="part4"><div class="pk">Part 4</div><h2>Finish the robot</h2><p>Mount the servo while the firmware holds it at its exact middle, then move the sensors onto the beam and let Fulcrum calibrate itself.</p></div>
+
+    <section class="step" id="servomount" data-audio="servomount" data-n="4.1">
+      <div class="step-head"><span class="step-no">4.1</span><h3>Servo and push-rod</h3><button class="listen" data-audio="servomount"></button></div>
+      <figure class="fig"><img src="img/build-6-servo.png" alt="The servo glued to a cardboard post behind the track, its arm horizontal toward the far wall, a paperclip rod rising to the saddle at 29 cm." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Click <strong>Level</strong> in the Gym so the servo holds its middle position.</li>
+        <li>Glue the <strong>servo post</strong> to the base right behind the push-rod saddle (29 cm), its front face 3.4 cm behind the track's center line, and add its brace behind it.</li>
+        <li>Glue the servo to the post's front face with the shaft pointing <strong>toward you</strong>, about 5 cm above the base, just left of the push-rod saddle (by the length of the arm).</li>
+        <li>Push the long single arm onto the shaft, pointing at the far wall, as close to horizontal as the teeth allow.</li>
+        <li>Straighten the paperclip. Hook one end through the arm's outermost hole and squeeze the hook closed; hook the top end through the saddle's hole the same way. Bend the rod until the beam sits close to level.</li>
+      </ol>
+      <p class="note warn"><strong>No glue on the rod's joints.</strong> They have to pivot.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="servomount"> Done</label></div>
+    </section>
+
+    <section class="step" id="sensors" data-audio="sensors" data-n="4.2">
+      <div class="step-head"><span class="step-no">4.2</span><h3>Mount the sensors</h3><button class="listen" data-audio="sensors"></button></div>
+      <figure class="fig"><img src="img/build-7-sensors.png" alt="The ultrasonic sensor through the plate's holes, the GY-521 on the track's side, and the LED matrix on the front tower." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Push the ultrasonic sensor's cans through the plate's holes from outside, pins pointing down, and tape the board in place.</li>
+        <li>Stick the GY-521 to the outside of the track near 15 cm with double-sided tape. Any orientation works; calibration figures it out.</li>
+        <li>Stick the LED matrix to the front tower below the skewer, facing you.</li>
+        <li>Route the wires loosely so the beam swings without tugging on them.</li>
+      </ol>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="sensors"> Done</label></div>
+    </section>
+
+    <section class="step" id="calibrate" data-audio="calibrate" data-n="4.3">
+      <div class="step-head"><span class="step-no">4.3</span><h3>Calibrate</h3><button class="listen" data-audio="calibrate"></button></div>
+      <figure class="shot"><img src="img/gym-calibrate.png" alt="The calibration panel: a curve of beam angle against servo position, and three completed calibration steps." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Put the ball on the track and click <strong>Calibrate</strong> (or press <em>ST/REPT</em> on the remote). It takes about 50 seconds.</li>
+        <li><strong>Sweep:</strong> the servo moves slowly end to end while the gyro measures the beam, giving a map from servo position to beam angle.</li>
+        <li><strong>Ball test:</strong> it tilts one way, back, and again, and watches which way the ball rolls.</li>
+        <li><strong>Auto-level:</strong> it holds the ball mid-track and nudges until it finds true level. The result is saved on the Arduino.</li>
+      </ol>
+      <p class="note">If it reports that the ball didn't roll, check that the ball is on the track and that the beam sits roughly level at rest (adjust the push-rod's bends), then calibrate again.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="calibrate"> Done</label></div>
+    </section>
+
+    <!-- ===================================================== PART 5 -->
+    <div class="part-head" id="part5"><div class="pk">Part 5</div><h2>Teach it</h2><p>The robot can already balance with the starter brain I trained. Now train your own, examine it, and send it over.</p></div>
+
+    <section class="step" id="train" data-audio="train" data-n="5.1">
+      <div class="step-head"><span class="step-no">5.1</span><h3>Train a brain</h3><button class="listen" data-audio="train"></button></div>
+      <figure class="shot"><img src="img/gym-train.png" alt="The Dream tab during training: the learning curve dropping below the classic controller's line, and the brain's decision map." loading="lazy"></figure>
+      <ol class="instr">
+        <li>In the <strong>Dream</strong> tab, press <strong>Start training</strong>. Sixty-four simulated Fulcrums practice at once, each with different physics.</li>
+        <li>Watch the <strong>learning curve</strong>: it climbs while the brain explores, then drops below the gray line, the score of a classic hand-tuned controller.</li>
+        <li>Watch <strong>What the brain does</strong>: a clean diagonal forms as it learns that the right tilt depends on both where the ball is and how fast it rolls.</li>
+        <li>Two or three minutes is plenty. Click the track to move the target, click the ball to flick it, or press <strong>You</strong> and try balancing it yourself.</li>
+      </ol>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="train"> Done</label></div>
+    </section>
+
+    <section class="step" id="exam" data-audio="exam" data-n="5.2">
+      <div class="step-head"><span class="step-no">5.2</span><h3>The exam</h3><button class="listen" data-audio="exam"></button></div>
+      <figure class="shot"><img src="img/gym-exam.png" alt="The Exam tab: 32 small charts of exam worlds with pass marks, score tiles, and a map of the Arduino's memory." loading="lazy"></figure>
+      <ol class="instr">
+        <li>Open <strong>Exam</strong>, choose <strong>Best so far</strong>, and click <strong>Run the exam</strong>.</li>
+        <li>It's graded on the 544-byte, 8-bit copy the Arduino will run. Passing most of the 32 worlds means it's ready.</li>
+      </ol>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="exam"> Done</label></div>
+    </section>
+
+    <section class="step" id="send" data-audio="send" data-n="5.3">
+      <div class="step-head"><span class="step-no">5.3</span><h3>Send the brain</h3><button class="listen" data-audio="send"></button></div>
+      <figure class="shot"><img src="img/gym-send.png" alt="The Robot tab's brain panel after sending a new brain, with the live view in Brain mode." loading="lazy"></figure>
+      <ol class="instr">
+        <li>In <strong>Robot</strong>, click <strong>Send best brain</strong>. The Arduino checks every piece and stores the brain in memory that survives power-off.</li>
+        <li>Choose <strong>Brain</strong> mode, set the ball on the track, and let go.</li>
+      </ol>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="send"> Done</label></div>
+    </section>
+
+    <section class="step" id="play" data-audio="play" data-n="5.4">
+      <div class="step-head"><span class="step-no">5.4</span><h3>Play with it</h3><button class="listen" data-audio="play"></button></div>
+      <div class="remote-grid">
+        <svg viewBox="0 0 200 400" role="img" aria-label="The ELEGOO remote with Fulcrum's button meanings" id="remote-svg"></svg>
+        <div class="table-wrap"><table class="conn"><thead><tr><th>Button</th><th>What Fulcrum does</th></tr></thead><tbody>
+          <tr><td>POWER or ▶❚❚</td><td>start balancing, or rest</td></tr>
+          <tr><td>FUNC/STOP</td><td>switch brain → classic PID → knob tilts the beam (you're the brain)</td></tr>
+          <tr><td>1 … 9</td><td>send the ball to a spot: 1 is nearest the sensor, 9 is farthest</td></tr>
+          <tr><td>0</td><td>hand the target back to the knob</td></tr>
+          <tr><td>▲ ▼</td><td>nudge the target 1 cm</td></tr>
+          <tr><td>VOL+ VOL−</td><td>fine-tune level by 0.05°</td></tr>
+          <tr><td>◀◀ ▶▶</td><td>face, neurons, or a tiny copy of the beam on the LED matrix</td></tr>
+          <tr><td>EQ</td><td>buzzer on or off</td></tr>
+          <tr><td>ST/REPT</td><td>calibrate</td></tr>
+        </tbody></table></div>
+      </div>
+      <div class="faces" id="faces"></div>
+      <p class="note">Unplugged from the Mac, Fulcrum keeps its brain and calibration. Power the Arduino with the 9 V battery (or a USB power bank) and the servo with the adapter, then press POWER on the remote.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="play"> Done</label></div>
+    </section>
+
+    <section class="step" id="dreamreal" data-audio="dreamreal" data-n="5.5">
+      <div class="step-head"><span class="step-no">5.5</span><h3>Dream vs reality</h3><button class="listen" data-audio="dreamreal"></button></div>
+      <figure class="shot"><img src="img/gym-dreamreal.png" alt="Chart: the ball's position on the robot and in the simulator during the same 20-second routine of target changes." loading="lazy"></figure>
+      <ol class="instr">
+        <li>In <strong>Robot</strong>, with Brain mode on, click <strong>Run the test</strong>. Fulcrum runs a 20-second routine of target jumps on the real track, then the Gym dreams the same routine with the same brain.</li>
+        <li>The space between the blue and orange lines is the <strong>reality gap</strong>. Small gap: the dream was a good model of your cardboard.</li>
+      </ol>
+      <p class="note">The screenshot above is the virtual robot, whose physics are deliberately different from the dream's. Yours will tell you how good the simulator really is.</p>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="dreamreal"> Done</label></div>
+    </section>
+
+    <section class="step" id="experiments" data-audio="experiments" data-n="5.6">
+      <div class="step-head"><span class="step-no">5.6</span><h3>Experiments</h3><button class="listen" data-audio="experiments"></button></div>
+      <ol class="instr">
+        <li><strong>Skip the randomization.</strong> Turn off <em>Train for the real world</em>, train a new brain, send it. It aces its one perfect dream and struggles on real cardboard.</li>
+        <li><strong>Change the ball.</strong> Try a golf ball (pick it in the Gym first). Does the brain cope with a heavier, faster ball?</li>
+        <li><strong>Watch it learn from scratch.</strong> Press <em>New brain</em> and keep your eye on the decision map. The moment the diagonal appears is when it figured out balancing.</li>
+        <li><strong>Beat the classic controller.</strong> Run the dream-vs-reality test in Brain mode and in PID mode and compare.</li>
+        <li><strong>Be the brain.</strong> FUNC/STOP until the knob tilts the beam, and try to hold the ball still. Then let the brain have it back.</li>
+      </ol>
+      <div class="done-row"><label class="done"><input type="checkbox" data-done="experiments"> Done</label></div>
+    </section>
+
+    <!-- ===================================================== reference -->
+    <div class="part-head" id="trouble"><div class="pk">Reference</div><h2>Troubleshooting</h2></div>
+    <div class="step">
+      <div class="table-wrap"><table class="conn"><thead><tr><th>What you see</th><th>Usual cause and fix</th></tr></thead><tbody>
+        <tr><td>No port to pick in Connect</td><td>Try another cable or adapter (some USB-C adapters are charge-only). Use Chrome; Safari has no USB support.</td></tr>
+        <tr><td>Connected, but no hello</td><td>Firmware not installed yet: click Install firmware. Or the Arduino IDE's Serial Monitor is open and holding the port; close it.</td></tr>
+        <tr><td>Install firmware says it can't reach the bootloader</td><td>Unplug and replug the Arduino, reconnect, try again. Still failing: use Plan B (Arduino IDE).</td></tr>
+        <tr><td>Sonar: no echo</td><td>Trig and Echo swapped (pin 7 is Trig, 8 is Echo), or VCC/Gnd loose. The cans must face down the track.</td></tr>
+        <tr><td>Gyro: not found</td><td>SDA/SCL swapped (SDA is A4, SCL is A5) or VCC loose. Fulcrum still works without it, with a less precise calibration.</td></tr>
+        <tr><td>Servo doesn't move, or twitches and the Arduino resets</td><td>Power module off or the 9 V adapter unplugged; top jumper not on 5V; capacitor backwards; servo red wire on the bottom rail.</td></tr>
+        <tr><td>Remote does nothing</td><td>Y must go to pin 2; aim at the receiver's dome; replace the remote's coin cell (pull the plastic tab out first).</td></tr>
+        <tr><td>LED face is sideways or upside down</td><td>Click <strong>Rotate face</strong> in the Gym's <em>Check the parts</em> panel until it looks right (it remembers).</td></tr>
+        <tr><td>Ball always runs off to one end</td><td>Calibrate again with the ball on the track. If the ball test fails, the beam is far from level at rest: re-bend the push-rod.</td></tr>
+        <tr><td>Ball hunts back and forth around the target</td><td>Loose push-rod joints add slop (tighten the hooks, but keep them free to turn). Train a little longer. Make sure the wires aren't tugging the beam.</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <div class="part-head" id="curious"><div class="pk">Reference</div><h2>How it works, for the curious</h2><p>The real equations behind the simulator, the learner and the robot.</p></div>
+    <div class="step">
+      <h3>The physics in the dream</h3>
+      <p>Put the pivot at the origin, let <i>s</i> be the ball's position along the track measured from the pivot, <i>θ</i> the beam angle (positive tips the far end down), <i>h</i> the height of the ball's center above the pivot, <i>r<sub>c</sub></i> the ball's rolling radius on the V, <i>m</i> and <i>J</i> its mass and moment of inertia. Rolling without slipping makes the ball's spin <i>ω</i> = <i>ṡ</i>/<i>r<sub>c</sub></i> + <i>θ̇</i>, so</p>
+      <div class="derive">
+        <div class="math" data-tex="L=\tfrac12 m\left[(\dot s+h\dot\theta)^2+s^2\dot\theta^2\right]+\tfrac12 J\left(\tfrac{\dot s}{r_c}+\dot\theta\right)^2-mg\,(h\cos\theta-s\sin\theta)"></div><div class="why">kinetic energy of the ball's center and its spin, minus gravity</div>
+        <div class="math" data-tex="\tfrac{d}{dt}\tfrac{\partial L}{\partial \dot s}=\left(m+\tfrac{J}{r_c^2}\right)\ddot s+\left(mh+\tfrac{J}{r_c}\right)\ddot\theta"></div><div class="why">differentiate the momentum along the track</div>
+        <div class="math" data-tex="\tfrac{\partial L}{\partial s}=ms\dot\theta^2+mg\sin\theta"></div><div class="why">centrifugal push and gravity's pull along the track</div>
+        <div class="math" data-tex="\ddot s=k\left(g\sin\theta+s\dot\theta^2-h_{\mathrm{eff}}\,\ddot\theta\right),\quad k=\frac{1}{1+J/(mr_c^2)},\quad h_{\mathrm{eff}}=h+\frac{J}{m r_c}"></div><div class="why">Euler–Lagrange, divided through by m + J/r<sub>c</sub>²</div>
+      </div>
+      <p>A ping-pong ball is a thin shell, <i>J</i> = ⅔<i>mr</i>², and in a 90° V it rolls on a radius <i>r<sub>c</sub></i> = <i>r</i>/√2, so <i>k</i> = 1/(1 + 4/3) = 3/7 ≈ 0.43: only 43% of gravity's pull along the track becomes acceleration; the rest spins the ball. The <i>h</i><sub>eff</sub><i>θ̈</i> term is the kick the ball gets when the beam jerks. The simulator adds rolling friction that sticks below a threshold, bumps in the cardboard, a servo modeled as a stiff damped spring with dead time, speed and torque limits, gear slop, and an ultrasonic sensor with noise, dropouts, garbage echoes and a blind spot.</p>
+
+      <h3>What the brain sees and does</h3>
+      <p>The sonar's readings go through an alpha-beta tracker (the same arithmetic on the Arduino and in the dream):</p>
+      <div class="math" data-tex="\hat x^-=\hat x+\hat v\,\Delta t,\qquad r=z-\hat x^-,\qquad \hat x\leftarrow \hat x^-+\alpha r,\qquad \hat v\leftarrow \hat v+\frac{\beta}{\Delta t}\,r,\qquad \alpha=0.45,\ \beta=0.10,\ \Delta t=40\ \mathrm{ms}"></div>
+      <p>The brain is a 6 → 16 → 16 → 1 network with tanh neurons. Its inputs are the miss <i>e</i> = <i>x̂</i> − target (scaled by 15 cm), the speed (scaled by 40 cm/s), its last two tilts, the integral of the miss (scaled by 0.05 m·s), and where the ball is. Its output, between −1 and 1, is the tilt in units of 7°.</p>
+
+      <h3>How it learns: PPO</h3>
+      <p>Each practice step earns a reward for being close and calm:</p>
+      <div class="math" data-tex="r_t=e^{-(e_t/2\,\mathrm{cm})^2}-\frac{|e_t|}{15\,\mathrm{cm}}-0.05\left(\frac{v_t}{20\,\mathrm{cm/s}}\right)^2-0.25\,|u_t-u_{t-1}|-0.02\,u_t^2-2\cdot[\text{wall hit}]"></div>
+      <p>Proximal Policy Optimization nudges the brain toward actions that turned out better than a second network, the critic <i>V</i>, expected, while never changing the policy too much at once:</p>
+      <div class="math" data-tex="L(\phi)=\mathbb{E}_t\!\left[\min\!\left(\rho_t\hat A_t,\ \mathrm{clip}(\rho_t,1-\epsilon,1+\epsilon)\,\hat A_t\right)\right],\quad \rho_t=\frac{\pi_\phi(a_t\mid o_t)}{\pi_{\phi_{\mathrm{old}}}(a_t\mid o_t)},\quad \epsilon=0.2"></div>
+      <div class="math" data-tex="\hat A_t=\sum_{l\ge 0}(\gamma\lambda)^l\,\delta_{t+l},\qquad \delta_t=r_t+\gamma V(s_{t+1})-V(s_t),\qquad \gamma=0.98,\ \lambda=0.95"></div>
+      <p>The critic is allowed to peek at the dream's hidden physics (the true level error, the true ball position), which makes its estimates better; the brain that ships to the robot only ever sees the sensor. That split is called an asymmetric actor-critic. Training runs 64 worlds in parallel, 8,192 decisions per learning step.</p>
+
+      <h3>Fitting it into 1 KB</h3>
+      <p>Each layer's weights are stored as signed bytes with one scale per layer, <i>w</i> ≈ <i>s</i>·<i>q</i>, <i>q</i> = round(<i>w</i>/<i>s</i>), <i>s</i> = max|<i>w</i>|/127, so a neuron computes <i>b</i> + <i>s</i>·Σ<i>q<sub>k</sub>x<sub>k</sub></i>. The whole brain is 544 bytes with its header and CRC-32 checksum. The exam grades exactly this copy, and on a desktop the firmware's C++ matches the Gym's JavaScript to within 10<sup>−7</sup>.</p>
+
+      <h3>Calibration without knowing how the gyro is mounted</h3>
+      <p>Fulcrum reads which way is "up" (<i>u</i>) at the servo's middle and at both extremes (<i>g<sub>A</sub></i>, <i>g<sub>B</sub></i>). The pivot axis is <i>n</i> = (<i>g<sub>A</sub></i> × <i>g<sub>B</sub></i>)/|<i>g<sub>A</sub></i> × <i>g<sub>B</sub></i>|, and any later reading's beam angle is</p>
+      <div class="math" data-tex="\varphi=\operatorname{atan2}\!\left(n\cdot(u_{\mathrm{ref}}\times u),\ u_{\mathrm{ref}}\cdot u\right)"></div>
+      <p>which doesn't care which way the board faces. Level comes from the ball itself: a gentle controller holds it mid-track while a correction creeps toward wherever the ball drifts; averaged over ten seconds, the tilt that keeps the ball still is true level.</p>
+
+      <h3>What I tested before you build</h3>
+      <div class="results">
+        <div class="result"><div class="v">0.43 cm</div><div class="l">median settling error after calibration, across 100 randomly crooked simulated builds (90th percentile 0.70 cm, no wall hits)</div></div>
+        <div class="result"><div class="v">99 / 100</div><div class="l">simulated builds that calibrated, including a gyro stuck on at random angles and level errors up to ±6°</div></div>
+        <div class="result"><div class="v">30 / 32</div><div class="l">exam worlds passed by the starter brain; a hand-tuned PID controller passes 19</div></div>
+      </div>
+      <p>The real firmware was compiled for the Uno (27.9 KB of 32 KB flash, 790 bytes of RAM to spare) and also run on a Mac against the simulated robot: it calibrates, balances as well as the simulator predicts, accepts new brains and refuses a corrupted one. None of this is a promise about your cardboard. That's what the dream-vs-reality test is for.</p>
+    </div>
+
+    <div class="part-head" id="files"><div class="pk">Reference</div><h2>What's in the folder</h2><p>Everything is also on GitHub: <a href="https://github.com/michaellomuscio/fulcrum" target="_blank" rel="noopener">github.com/michaellomuscio/fulcrum</a>.</p></div>
+    <div class="step">
+      <div class="table-wrap"><table class="conn"><tbody>
+        <tr><td><code>Fulcrum Gym.command</code></td><td>double-click to open the Gym in Chrome (needed for USB)</td></tr>
+        <tr><td><code>firmware/Fulcrum/</code></td><td>the Arduino program (<code>Fulcrum.ino</code> plus helpers). <code>PROTOCOL.md</code> lists its USB commands.</td></tr>
+        <tr><td><code>gym/</code></td><td>the Gym web app; <code>gym/firmware_hex.js</code> is the compiled firmware it installs</td></tr>
+        <tr><td><code>core/</code></td><td>shared code: the simulator, the PPO learner, the brain packer, calibration, and <code>spec.js</code>, the single source of every constant</td></tr>
+        <tr><td><code>guide/</code></td><td>this guide, its narration, illustrations, and <code>fulcrum-cut-templates.pdf</code></td></tr>
+        <tr><td><code>tools/</code></td><td>headless training, the exam, and the tests that compare the firmware with the simulator</td></tr>
+        <tr><td><code>BUILD_SPEC.md</code></td><td>every dimension, position and wire, in one place</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <footer>Fulcrum, built with Claude Code for an ELEGOO Most Complete Starter Kit. Narration voiced with Kokoro (af_heart), on your Mac.</footer>
+  </main>
+</div>
+
+<div class="player" id="player" hidden>
+  <div class="inner">
+    <button id="pl-prev" aria-label="Previous step">◀◀</button>
+    <button id="pl-pp" class="pp" aria-label="Pause">❚❚</button>
+    <button id="pl-next" aria-label="Next step">▶▶</button>
+    <div class="now"><div class="t" id="pl-title"></div><div class="s" id="pl-sub"></div><div class="bar"><span id="pl-bar"></span></div></div>
+    <button id="pl-close" aria-label="Close the player">✕</button>
+  </div>
+</div>
+<audio id="audio" preload="none"></audio>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script type="module">
+/*GUIDE_JS*/
+</script>

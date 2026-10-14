@@ -1,0 +1,11 @@
+node_modules/
+.DS_Store
+*.log
+# build outputs (tools/build.mjs regenerates them; the Gym embeds the firmware in gym/firmware_hex.js)
+firmware/build/
+guide/dist/
+# desktop test binaries (see README to build them)
+tests/host/host_test
+tests/sil/sil
+# local training runs and screenshots
+tools/out/

@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fulcrum step renderer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>body { margin: 0; background: #7a7f86; } canvas { display: block; max-width: 100%; }</style>
+</head>
+<body>
+<canvas id="out"></canvas>
+<script type="module">
+import { buildScene, applyStep, setTilt, STEPS, PIVOT_X, PZ, FOLD, BALL_Z, BALL_R, T, WALL, TOWER_INNER, ROD_HOLE_Z, STRAW_R, SHAFT, HORN_HOLE } from '../model.js';
+
+const INK = '#11161c', INK2 = '#47515d', LINE = '#c3cbd5', BLUE = '#1f5fbf';
+const params = new URLSearchParams(location.search);
+const S = buildScene(THREE, { braces: params.get('braces') || 'inner' });
+const { scene, parts } = S;
+
+// ---------------------------------------------------------------- lights and ground
+const hemi = new THREE.HemisphereLight(0xffffff, 0xd2bf9f, 0.58);
+hemi.position.set(0, 0, 1);
+scene.add(hemi);
+const key = new THREE.DirectionalLight(0xffffff, 0.86);
+key.position.set(-10, -20, 75);
+key.target.position.set(22, 0, 6);
+key.castShadow = true;
+key.shadow.mapSize.set(4096, 4096);
+Object.assign(key.shadow.camera, { left: -45, right: 45, top: 45, bottom: -45, near: 1, far: 200 });
+key.shadow.bias = -0.0004;
+key.shadow.radius = 3;
+scene.add(key, key.target);
+const fill = new THREE.DirectionalLight(0xffffff, 0.32);
+fill.position.set(70, -30, 30);
+scene.add(fill);
+const rim = new THREE.DirectionalLight(0xffffff, 0.18);
+rim.position.set(10, 60, 40);
+scene.add(rim);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.ShadowMaterial({ opacity: 0.13 }));
+ground.receiveShadow = true;
+ground.position.set(22, 0, 0);
+scene.add(ground);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(1);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.92;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x000000, 0);
+
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const HOME = new Map(Object.entries(parts).map(([k, o]) => [k, o.position.clone()]));
+const B = (x, y, z) => S.beamToWorld(x, y, z);       // track coordinates (x from the sonar end, z above the skewer)
+
+// ---------------------------------------------------------------- per-step framing and notes
+const CONF = {
+  fold: {
+    dir: [-0.78, -1.0, 0.5], margins: [0.1, 0.04, 0.14, 0.06],
+    notes: () => [
+      dim(B(0, WALL / Math.SQRT2, FOLD + WALL / Math.SQRT2), B(44, WALL / Math.SQRT2, FOLD + WALL / Math.SQRT2), '44 cm', [0, -70]),
+      callout(B(17, 0, FOLD), 'Score down the middle,', [-40, 170], 'then fold to a right angle'),
+      arrowAlong(B(22, WALL / Math.SQRT2 * 0.45, FOLD + WALL / Math.SQRT2 * 0.45 + 0.3), B(38, WALL / Math.SQRT2 * 0.45, FOLD + WALL / Math.SQRT2 * 0.45 + 0.3), 'ridges inside run the long way', [40, 64]),
+      dim(B(0, 0, FOLD), B(0, WALL / Math.SQRT2, FOLD + WALL / Math.SQRT2), '3.5 cm', [-80, -10]),
+      inset('fold'),
+    ],
+  },
+  saddles: {
+    dir: [-0.5, -1.0, 1.05], margins: [0.05, 0.05, 0.2, 0.08],
+    notes: () => [
+      tag('The track upside down', [40, 40]),
+      callout(B(0, 0, FOLD + 1), 'Sonar end', [-40, 120]),
+      ...[[5, '5 cm', [-60, -150]], [22, '22 cm · pivot', [-40, -170]], [29, '29 cm · push-rod', [-20, -185]], [39, '39 cm', [120, -120]]]
+        .map(([x, t, o]) => callout(B(x, -SADDLE_W / 2 + 0.6, STRAW_R + 0.05), t, o)),
+      callout(B(22, 4.6, 0), 'Straw glued along the edge', [140, 120], 'about 10.5 cm long'),
+      callout(B(29 - T / 2, 0, STRAW_R + 0.7), 'Small hole, 7 mm', [190, 60], 'from the edge, centered'),
+    ],
+  },
+  ends: {
+    dir: [-1.0, -0.72, 0.62], margins: [0.08, 0.06, 0.14, 0.14],
+    notes: () => [
+      dim(B(-T, -1.3, BALL_Z), B(-T, 1.3, BALL_Z), '2.6 cm', [0, -150]),
+      callout(B(-T, 1.3 + 0.55, BALL_Z - 0.55), 'Two 1.6 cm holes,', [220, -10], 'centered at the ball’s height'),
+      callout(B(-T, -2.6, FOLD + 2.6), 'Sonar plate, 7 × 9 cm', [-150, -40]),
+      callout(B(-T, -2.8, FOLD - 0.95), 'Bottom edge about', [-130, 40], '1 cm below the fold'),
+      callout(B(44 + T, 0, FOLD + 4.2), 'Far wall, 7 × 6 cm', [60, -90]),
+    ],
+  },
+  towers: {
+    dir: [-0.85, -1.0, 1.05], margins: [0.06, 0.06, 0.12, 0.1],
+    notes: () => [
+      dim(V(PIVOT_X + 3.5, -TOWER_INNER, 14.4), V(PIVOT_X + 3.5, TOWER_INNER, 14.4), '10.7 cm apart', [80, -40]),
+      callout(V(PIVOT_X, -TOWER_INNER - T, PZ), 'Skewer hole: 1.5 cm below', [-250, -110], 'the top, centered'),
+      dim(V(PIVOT_X + 3.5, -TOWER_INNER - T, 0.4), V(PIVOT_X + 3.5, -TOWER_INNER - T, 14.4), '14 cm', [90, 0]),
+      callout(V(PIVOT_X - 3.3, -TOWER_INNER + 1.4, 2.6), S.braces === 'inner' ? 'Triangle brace (5 × 9),' : 'Triangle brace (5 × 9)', [-250, 130], S.braces === 'inner' ? 'on the inside of each tower' : 'on the outside of each tower'),
+      callout(V(40, -5.5, 0.4), 'Base 52 × 16 cm;', [70, 90], 'towers at its center'),
+    ],
+  },
+  hang: {
+    dir: [-0.6, -1.0, 0.5], margins: [0.05, 0.05, 0.1, 0.08],
+    explode: { skewer: [0, -17, 0] },
+    notes: () => [
+      path(V(PIVOT_X, -0.3 - 17 + 7.0, PZ), V(PIVOT_X, -TOWER_INNER - T - 0.2, PZ)),
+      callout(V(PIVOT_X, -21.5, PZ), 'Push the skewer through:', [-60, 150], 'tower → straw → tower'),
+      swing(B(43, 0, FOLD + 3), 'rocks freely'),
+    ],
+  },
+  servo: {
+    dir: [1.15, -1.0, 0.42], margins: [0.04, 0.04, 0.06, 0.05],
+    fit: { min: [23, -4, 0.4], max: [36, 5, 16] },
+    notes: () => [
+      callout(V(31.4, 3.4, 7.4), 'Servo post, 6 × 8 cm,', [120, -110], 'just behind the track'),
+      callout(V(29.0, 1.4, 5.5), 'Servo on its front,', [260, 40], 'shaft toward you'),
+      callout(V(SHAFT.x + 1.75, 0.3, SHAFT.z), 'Horn level, pointing', [-300, 170], 'toward the far wall'),
+      callout(V(28.75, 0.0, 9.6), 'Paperclip push-rod,', [-330, -20], 'hanging straight down'),
+      callout(B(29.3, 0, ROD_HOLE_Z), 'Hooked through the', [130, -150], 'saddle at 29 cm'),
+    ],
+  },
+  sensors: {
+    dir: [-0.62, -1.0, 0.62], margins: [0.05, 0.05, 0.12, 0.1],
+    notes: () => [
+      callout(B(-T - 0.3, -2.0, BALL_Z + 0.4), 'Sonar: cans through', [-40, -170], 'the holes, pins down'),
+      callout(B(15, -1.7, FOLD + 0.9), 'Gyro board,', [-80, 190], 'any way up'),
+      callout(V(PIVOT_X - 1.2, -6.4, PZ - 2.2), 'LED face, below', [140, 170], 'the skewer'),
+    ],
+  },
+};
+const SADDLE_W = 7;
+
+// ---------------------------------------------------------------- note primitives (drawn after the render)
+function callout(at, text, off, sub) { return { kind: 'callout', at, text, off, sub }; }
+function dim(a, b, text, off) { return { kind: 'dim', a, b, text, off }; }
+function arrowAlong(a, b, text, off) { return { kind: 'arrow', a, b, text, off }; }
+function tag(text, at) { return { kind: 'tag', text, px: at }; }
+function swing(at, text) { return { kind: 'swing', at, text }; }
+function path(a, b) { return { kind: 'path', a, b }; }
+function inset(which) { return { kind: 'inset', which }; }
+
+function project(p, cam, W, H) {
+  const v = p.clone().project(cam);
+  return [(v.x + 1) / 2 * W, (1 - v.y) / 2 * H];
+}
+
+function fontsReady() { return document.fonts.load('700 28px "Atkinson Hyperlegible"').then(() => document.fonts.load('400 24px "Atkinson Hyperlegible"')); }
+
+function labelBox(ctx, x, y, text, sub, align = 'center') {
+  ctx.font = '700 28px "Atkinson Hyperlegible", sans-serif';
+  const w1 = ctx.measureText(text).width;
+  ctx.font = '400 24px "Atkinson Hyperlegible", sans-serif';
+  const w2 = sub ? ctx.measureText(sub).width : 0;
+  const w = Math.max(w1, w2) + 30, h = sub ? 80 : 50;
+  let bx = align === 'left' ? x : align === 'right' ? x - w : x - w / 2, by = y - h / 2;
+  ctx.fillStyle = 'rgba(255,255,255,0.96)';
+  ctx.strokeStyle = LINE; ctx.lineWidth = 2;
+  roundRect(ctx, bx, by, w, h, 12); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = INK; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.font = '700 28px "Atkinson Hyperlegible", sans-serif';
+  ctx.fillText(text, bx + 15, by + (sub ? 34 : 34));
+  if (sub) { ctx.font = '400 24px "Atkinson Hyperlegible", sans-serif'; ctx.fillStyle = INK2; ctx.fillText(sub, bx + 15, by + 66); }
+  return { x: bx, y: by, w, h };
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+
+// every line gets a white halo first, so the PNGs read on light and dark pages alike
+function halo(ctx, draw, color, width, dash) {
+  ctx.save();
+  ctx.setLineDash(dash || []); ctx.lineCap = 'round';
+  ctx.strokeStyle = 'rgba(255,255,255,0.92)'; ctx.lineWidth = width + 5; draw(); ctx.stroke();
+  ctx.strokeStyle = color; ctx.lineWidth = width; draw(); ctx.stroke();
+  ctx.restore();
+}
+function haloHead(ctx, x, y, ang, size, color) {
+  ctx.save(); ctx.fillStyle = 'rgba(255,255,255,0.92)';
+  ctx.beginPath(); ctx.moveTo(x + 3 * Math.cos(ang), y + 3 * Math.sin(ang));
+  ctx.lineTo(x - (size + 4) * Math.cos(ang - 0.45), y - (size + 4) * Math.sin(ang - 0.45));
+  ctx.lineTo(x - (size + 4) * Math.cos(ang + 0.45), y - (size + 4) * Math.sin(ang + 0.45));
+  ctx.closePath(); ctx.fill(); ctx.restore();
+  ctx.fillStyle = color; arrowHead(ctx, x, y, ang, size);
+}
+
+function arrowHead(ctx, x, y, ang, size = 16) {
+  ctx.beginPath(); ctx.moveTo(x, y);
+  ctx.lineTo(x - size * Math.cos(ang - 0.4), y - size * Math.sin(ang - 0.4));
+  ctx.lineTo(x - size * Math.cos(ang + 0.4), y - size * Math.sin(ang + 0.4));
+  ctx.closePath(); ctx.fill();
+}
+
+function drawNotes(ctx, notes, cam, W, H) {
+  for (const n of notes) {
+    if (n.kind === 'callout') {
+      const [ax, ay] = project(n.at, cam, W, H);
+      const lx = ax + n.off[0], ly = ay + n.off[1];
+      halo(ctx, () => { ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(lx, ly); }, INK, 2.5);
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(ax, ay, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = INK; ctx.lineWidth = 3; ctx.stroke();
+      labelBox(ctx, lx, ly, n.text, n.sub, n.off[0] > 40 ? 'left' : n.off[0] < -40 ? 'right' : 'center');
+    } else if (n.kind === 'dim') {
+      const [ax, ay] = project(n.a, cam, W, H), [bx, by] = project(n.b, cam, W, H);
+      const [ox, oy] = n.off;
+      const a2 = [ax + ox, ay + oy], b2 = [bx + ox, by + oy];
+      halo(ctx, () => { ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(a2[0] + Math.sign(ox) * 8, a2[1] + Math.sign(oy) * 8); ctx.moveTo(bx, by); ctx.lineTo(b2[0] + Math.sign(ox) * 8, b2[1] + Math.sign(oy) * 8); }, INK2, 2);
+      halo(ctx, () => { ctx.beginPath(); ctx.moveTo(...a2); ctx.lineTo(...b2); }, INK, 2.5);
+      const ang = Math.atan2(b2[1] - a2[1], b2[0] - a2[0]);
+      haloHead(ctx, b2[0], b2[1], ang, 16, INK); haloHead(ctx, a2[0], a2[1], ang + Math.PI, 16, INK);
+      labelBox(ctx, (a2[0] + b2[0]) / 2, (a2[1] + b2[1]) / 2, n.text);
+    } else if (n.kind === 'arrow') {
+      const [ax, ay] = project(n.a, cam, W, H), [bx, by] = project(n.b, cam, W, H);
+      halo(ctx, () => { ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); }, BLUE, 4);
+      const ang = Math.atan2(by - ay, bx - ax);
+      haloHead(ctx, bx, by, ang, 20, BLUE); haloHead(ctx, ax, ay, ang + Math.PI, 20, BLUE);
+      labelBox(ctx, (ax + bx) / 2 + n.off[0], (ay + by) / 2 + n.off[1], n.text);
+    } else if (n.kind === 'tag') {
+      ctx.font = '700 26px "Atkinson Hyperlegible", sans-serif';
+      const w = ctx.measureText(n.text).width + 28;
+      ctx.fillStyle = BLUE; roundRect(ctx, n.px[0], n.px[1], w, 46, 23); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(n.text, n.px[0] + 14, n.px[1] + 24);
+    } else if (n.kind === 'swing') {
+      const [ax, ay] = project(n.at, cam, W, H);
+      const r = 70, a0 = -0.55, a1 = 0.55, cx = ax + 30;
+      halo(ctx, () => { ctx.beginPath(); ctx.arc(cx, ay, r, a0, a1); }, BLUE, 4);
+      haloHead(ctx, cx + r * Math.cos(a1), ay + r * Math.sin(a1), a1 + Math.PI / 2, 20, BLUE);
+      haloHead(ctx, cx + r * Math.cos(a0), ay + r * Math.sin(a0), a0 - Math.PI / 2, 20, BLUE);
+      labelBox(ctx, cx + r + 20, ay, n.text, null, 'left');
+    } else if (n.kind === 'path') {
+      const [ax, ay] = project(n.a, cam, W, H), [bx, by] = project(n.b, cam, W, H);
+      halo(ctx, () => { ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); }, BLUE, 4, [14, 10]);
+      haloHead(ctx, bx, by, Math.atan2(by - ay, bx - ax), 22, BLUE);
+    } else if (n.kind === 'inset' && n.which === 'fold') {
+      drawFoldInset(ctx, W - 470, H - 290, 430, 250);
+    }
+  }
+}
+
+// end view: a flat strip with its score line, then the same strip folded to 90 degrees
+function drawFoldInset(ctx, x, y, w, h) {
+  ctx.fillStyle = 'rgba(255,255,255,0.96)'; ctx.strokeStyle = LINE; ctx.lineWidth = 2;
+  roundRect(ctx, x, y, w, h, 14); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = INK2; ctx.font = '700 22px "Atkinson Hyperlegible", sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.fillText('Seen from the end', x + 18, y + 34);
+  const kraft = '#c59c63', edge = '#5c4226';
+  const thick = (pts) => {
+    for (const [col, lw] of [[edge, 13], [kraft, 9]]) {
+      ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.lineJoin = 'miter'; ctx.lineCap = 'butt';
+      ctx.beginPath(); ctx.moveTo(...pts[0]); for (const p of pts.slice(1)) ctx.lineTo(...p); ctx.stroke();
+    }
+  };
+  // flat strip
+  const fx = x + 34, fy = y + 150, fw = 150;
+  thick([[fx, fy], [fx + fw, fy]]);
+  ctx.strokeStyle = BLUE; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(fx + fw / 2, fy - 18); ctx.lineTo(fx + fw / 2, fy + 18); ctx.stroke();
+  ctx.fillStyle = INK; ctx.font = '400 20px "Atkinson Hyperlegible", sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('7 cm', fx + fw / 2, fy + 46); ctx.fillStyle = BLUE; ctx.fillText('score', fx + fw / 2, fy - 26);
+  // arrow
+  ctx.strokeStyle = INK; ctx.fillStyle = INK; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(fx + fw + 16, fy); ctx.lineTo(fx + fw + 52, fy); ctx.stroke(); arrowHead(ctx, fx + fw + 58, fy, 0, 14);
+  // the V
+  const vx = x + w - 112, vy = y + 196, L = 82;
+  thick([[vx - L * 0.707, vy - L * 0.707], [vx, vy], [vx + L * 0.707, vy - L * 0.707]]);
+  ctx.strokeStyle = BLUE; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.arc(vx, vy - 10, 30, -Math.PI * 0.75, -Math.PI * 0.25); ctx.stroke();
+  ctx.fillStyle = BLUE; ctx.font = '700 22px "Atkinson Hyperlegible", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('90°', vx, vy - 50);
+  ctx.fillStyle = INK; ctx.font = '400 20px "Atkinson Hyperlegible", sans-serif';
+  ctx.fillText('3.5', vx - L * 0.38 - 26, vy - L * 0.28); ctx.fillText('3.5', vx + L * 0.38 + 26, vy - L * 0.28);
+}
+
+// ---------------------------------------------------------------- camera fitting
+function visibleBox(fit) {
+  if (fit) return new THREE.Box3(new THREE.Vector3(...fit.min), new THREE.Vector3(...fit.max));
+  const box = new THREE.Box3();
+  for (const obj of Object.values(parts)) if (obj.visible) box.expandByObject(obj);
+  return box;
+}
+
+function fitOrtho(cam, box, dir, W, H, m) {
+  const [mL, mR, mT, mB] = m;
+  const c = box.getCenter(new THREE.Vector3());
+  const d = new THREE.Vector3(...dir).normalize();
+  cam.up.set(0, 0, 1);
+  cam.position.copy(c).addScaledVector(d, 300);
+  cam.lookAt(c);
+  cam.updateMatrixWorld(true);
+  const inv = cam.matrixWorldInverse;
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+  for (let i = 0; i < 8; i++) {
+    const p = new THREE.Vector3(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z).applyMatrix4(inv);
+    x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y);
+  }
+  const cw = x1 - x0, ch = y1 - y0, aspect = W / H;
+  let Wf = Math.max(cw / (1 - mL - mR), ch / (1 - mT - mB) * aspect);
+  const Hf = Wf / aspect;
+  const left = x0 - mL * Wf - (Wf * (1 - mL - mR) - cw) / 2;
+  const bottom = y0 - mB * Hf - (Hf * (1 - mT - mB) - ch) / 2;
+  Object.assign(cam, { left, right: left + Wf, bottom, top: bottom + Hf, near: 1, far: 800 });
+  cam.updateProjectionMatrix();
+}
+
+// perspective: move in or out until the box fills the frame, recentering as we go
+function fitPerspective(cam, box, dir, fill) {
+  const d = dir.clone().normalize();
+  let look = box.getCenter(new THREE.Vector3()), D = 150;
+  cam.up.set(0, 0, 1);
+  for (let it = 0; it < 12; it++) {
+    cam.position.copy(look).addScaledVector(d, D);
+    cam.lookAt(look); cam.updateMatrixWorld(true); cam.updateProjectionMatrix();
+    let x0 = 9, x1 = -9, y0 = 9, y1 = -9;
+    for (let i = 0; i < 8; i++) {
+      const p = new THREE.Vector3(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z).project(cam);
+      x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y);
+    }
+    const ext = Math.max((x1 - x0) / 2, (y1 - y0) / 2) / fill;
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    const halfH = D * Math.tan(cam.fov * Math.PI / 360), halfW = halfH * cam.aspect;
+    const right = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 0), up = new THREE.Vector3().setFromMatrixColumn(cam.matrixWorld, 1);
+    look = look.clone().addScaledVector(right, cx * halfW).addScaledVector(up, cy * halfH);
+    D *= ext;
+  }
+}
+
+// ---------------------------------------------------------------- outline of the new parts
+const MASK_ON = new THREE.MeshBasicMaterial({ color: 0xffffff });
+const MASK_OFF = new THREE.MeshBasicMaterial({ color: 0x000000 });
+function maskOf(fresh, cam, W, H) {
+  const saved = [];
+  const isFresh = obj => { for (let o = obj; o; o = o.parent) if (o.userData.part && fresh.includes(o.userData.part)) return true; return false; };
+  scene.traverse(o => {
+    if (o.isLineSegments) { saved.push([o, 'visible', o.visible]); o.visible = false; }
+    else if (o.isMesh) { saved.push([o, 'material', o.material]); o.material = o === ground ? MASK_OFF : (isFresh(o) ? MASK_ON : MASK_OFF); }
+  });
+  ground.visible = false;
+  renderer.shadowMap.enabled = false;
+  renderer.setClearColor(0x000000, 1);
+  renderer.render(scene, cam);
+  const gl = renderer.getContext();
+  const px = new Uint8Array(W * H * 4);
+  gl.readPixels(0, 0, W, H, gl.RGBA, gl.UNSIGNED_BYTE, px);
+  for (const [o, k, v] of saved) o[k] = v;
+  ground.visible = true;
+  renderer.shadowMap.enabled = true;
+  renderer.setClearColor(0x000000, 0);
+  const mask = new Uint8Array(W * H);
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) mask[(H - 1 - y) * W + x] = px[(y * W + x) * 4] > 128 ? 1 : 0;
+  return mask;
+}
+
+function dilate(mask, W, H, r) {
+  const tmp = new Uint8Array(W * H), out = new Uint8Array(W * H);
+  for (let y = 0; y < H; y++) { let run = -1e9; for (let x = 0; x < W; x++) { if (mask[y * W + x]) run = x; tmp[y * W + x] = x - run <= r ? 1 : 0; } run = 1e9; for (let x = W - 1; x >= 0; x--) { if (mask[y * W + x]) run = x; if (run - x <= r) tmp[y * W + x] = 1; } }
+  for (let x = 0; x < W; x++) { let run = -1e9; for (let y = 0; y < H; y++) { if (tmp[y * W + x]) run = y; out[y * W + x] = y - run <= r ? 1 : 0; } run = 1e9; for (let y = H - 1; y >= 0; y--) { if (tmp[y * W + x]) run = y; if (run - y <= r) out[y * W + x] = 1; } }
+  return out;
+}
+
+// ---------------------------------------------------------------- render one step to a PNG data URL
+async function renderStep(id, opts = {}) {
+  await fontsReady();
+  const W = opts.w || 1600, H = opts.h || 1000;
+  renderer.setSize(W, H, false);
+  for (const [k, p] of HOME) parts[k].position.copy(p);
+  const step = applyStep(S, id);
+  if (id === 'hero') { setTilt(S, opts.tilt ?? 2.5); parts.ball.position.x = (opts.ballX ?? 14) - PIVOT_X; }
+  else parts.ball.position.x = 15 - PIVOT_X;
+  scene.updateMatrixWorld(true);
+  const conf = CONF[id] || {};
+  if (conf.explode) for (const [k, d] of Object.entries(conf.explode)) parts[k].position.add(new THREE.Vector3(...d));
+  scene.updateMatrixWorld(true);
+  const box = visibleBox(conf.fit);
+  // ground sits under whatever is shown (the beam floats in the early steps)
+  const solid = visibleBox();
+  ground.position.z = parts.base.visible ? 0 : solid.min.z - 0.05;
+  let cam;
+  if (id === 'hero') {
+    cam = new THREE.PerspectiveCamera(opts.fov || 24, W / H, 1, 1000);
+    fitPerspective(cam, solid, new THREE.Vector3(...(opts.dir || [-0.62, -1.0, 0.5])), opts.fill || 0.86);
+  } else {
+    cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 800);
+    fitOrtho(cam, box, conf.dir || [-0.6, -1, 0.7], W, H, conf.margins || [0.06, 0.06, 0.1, 0.1]);
+  }
+  key.target.position.copy(solid.getCenter(new THREE.Vector3()));
+  renderer.render(scene, cam);
+  const out = document.getElementById('out');
+  out.width = W; out.height = H;
+  const ctx = out.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  ctx.drawImage(renderer.domElement, 0, 0);
+  // outline and tint the parts added in this step
+  if (step.fresh && step.fresh.length) {
+    const mask = maskOf(step.fresh, cam, W, H);
+    const fat = dilate(mask, W, H, 4);
+    const img = ctx.getImageData(0, 0, W, H), d = img.data;
+    for (let i = 0; i < W * H; i++) {
+      if (fat[i] && !mask[i]) { d[i * 4] = 0x1f; d[i * 4 + 1] = 0x5f; d[i * 4 + 2] = 0xbf; d[i * 4 + 3] = 255; }
+      else if (mask[i]) { d[i * 4] = Math.round(d[i * 4] * 0.88 + 0x1f * 0.12); d[i * 4 + 1] = Math.round(d[i * 4 + 1] * 0.88 + 0x5f * 0.12); d[i * 4 + 2] = Math.round(d[i * 4 + 2] * 0.88 + 0xbf * 0.12); }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  if (conf.notes && !opts.bare) drawNotes(ctx, conf.notes(), cam, W, H);
+  return out.toDataURL('image/png');
+}
+
+window.renderStep = renderStep;
+window.STEP_LIST = STEPS.map(s => ({ id: s.id, file: s.file }));
+window.rendererReady = true;
+</script>
+</body>
+</html>
