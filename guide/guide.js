@@ -196,7 +196,7 @@ $('save-templates').addEventListener('click', async () => {
   try {
     const blob = await (await fetch('fulcrum-cut-templates.pdf')).blob();
     await dl.save({ filename: 'fulcrum-cut-templates.pdf', data: blob });
-    note.textContent = 'Saved. Print it at 100% (actual size) and check the 5 cm bar.';
+    note.textContent = 'Saved. Print it at 100% (actual size) and check the 2 inch bar.';
   } catch (e) {
     if (e && e.code === 'declined') return;
     note.textContent = "That didn't save. Use Open them on GitHub, or the copy in the fulcrum folder (guide/fulcrum-cut-templates.pdf).";

@@ -17,32 +17,32 @@
  {
   "id": "cut",
   "title": "Cut the cardboard",
-  "text": "Start by cutting the cardboard. Everything comes from one box.\n\nThe base is fifty-two by sixteen centimeters, and the track strip is forty-four by seven. Cut the track so the little ridges inside the cardboard run the long way. That's what keeps it straight.\n\nThe smaller pieces are on the printable templates: four saddles, two towers and their braces, the sensor plate, the far wall, and the servo post with its brace. Print them at actual size, check the five centimeter bar with your ruler, then trace and cut. Use a sharp blade against a ruler, and make a few light passes instead of one hard one."
+  "text": "Start by cutting the cardboard. Everything comes from one box.\n\nThe base is twenty and a half by six and a quarter inches, and the track strip is seventeen and a quarter by two and three quarters. Cut the track so the little ridges inside the cardboard run the long way. That's what keeps it straight.\n\nThe smaller pieces are on the printable templates: four saddles, two towers and their braces, the sensor plate, the far wall, and the servo post with its brace. Print them at actual size, check the two inch bar with your ruler, then trace and cut. Use a sharp blade against a ruler, and make a few light passes instead of one hard one."
  },
  {
   "id": "fold",
   "title": "Fold the track",
-  "text": "Now the track. Draw a line down the middle of the forty-four centimeter strip, and score it: press the back of a butter knife along the line, against a ruler. Then fold it into a V with a right angle, like a book opened halfway.\n\nThe ball will roll in the bottom of that V. If you have clear packing tape, lay a strip down the inside of each face. It gives the ball a smoother, more even ride."
+  "text": "Now the track. Draw a line down the middle of the seventeen and a quarter inch strip, and score it: press the back of a butter knife along the line, against a ruler. Then fold it into a V with a right angle, like a book opened halfway.\n\nThe ball will roll in the bottom of that V. If you have clear packing tape, lay a strip down the inside of each face. It gives the ball a smoother, more even ride."
  },
  {
   "id": "saddles",
   "title": "Saddles and straw",
-  "text": "Saddles hold the V's shape and carry everything else. Mark four lines across the bottom of the track, at five, twenty-two, twenty-nine and thirty-nine centimeters, measured from the end that will hold the sensor.\n\nBefore you glue the saddle at twenty-two, glue the drinking straw along its bottom edge, cut to about ten and a half centimeters. That saddle is the pivot.\n\nIn the saddle at twenty-nine, poke a small hole with a skewer tip, about seven millimeters up from the bottom edge, in the middle. The push-rod will hook in there.\n\nNow glue all four saddles under the track, with each notch hugging the V."
+  "text": "Saddles hold the V's shape and carry everything else. Mark four lines across the bottom of the track, at two inches, eight and five eighths, eleven and three eighths, and fifteen and three eighths, measured from the end that will hold the sensor.\n\nBefore you glue the saddle at eight and five eighths, glue the drinking straw along its bottom edge, cut to about four and an eighth inches. That saddle is the pivot.\n\nIn the saddle at eleven and three eighths, poke a small hole with a skewer tip, about a quarter inch up from the bottom edge, in the middle. The push-rod will hook in there.\n\nNow glue all four saddles under the track, with each notch hugging the V."
  },
  {
   "id": "ends",
   "title": "Sensor plate and far wall",
-  "text": "The sonar plate closes the end of the track at zero, and the far wall closes the other end.\n\nTo place the sensor's holes, set the ball in the V right against the plate, and mark the plate at the height of the ball's center. Draw two circles, one point six centimeters across, centered one point three centimeters to the left and right of your mark. Cut them out. The sensor's two silver cans will poke through them, right at ball height.\n\nGlue the plate across the end with its bottom edge about a centimeter below the fold, then glue the far wall across the other end."
+  "text": "The sonar plate closes the end of the track at zero, and the far wall closes the other end.\n\nTo place the sensor's holes, set the ball in the V right against the plate, and mark the plate at the height of the ball's center. Draw two circles, five eighths of an inch across, centered half an inch to the left and right of your mark. Cut them out. The sensor's two silver cans will poke through them, right at ball height.\n\nGlue the plate across the end with its bottom edge about three eighths of an inch below the fold, then glue the far wall across the other end."
  },
  {
   "id": "towers",
   "title": "Towers",
-  "text": "Two towers hold the pivot. In each tower, poke a hole for the skewer one and a half centimeters below the top, in the middle.\n\nGlue the towers upright onto the base, facing each other, ten point seven centimeters apart, centered along the base. Here's a trick: before the glue sets, slide a skewer through both holes so they line up.\n\nThen glue a triangle brace against the inside face of each tower, along the edge nearest the sonar end, to keep it standing straight."
+  "text": "Two towers hold the pivot. In each tower, poke a hole for the skewer five eighths of an inch below the top, in the middle.\n\nGlue the towers upright onto the base, facing each other, four and a quarter inches apart, centered along the base. Here's a trick: before the glue sets, slide a skewer through both holes so they line up.\n\nThen glue a triangle brace against the inside face of each tower, along the edge nearest the sonar end, to keep it standing straight."
  },
  {
   "id": "hang",
   "title": "Hang the beam",
-  "text": "Now hang the beam. Push the skewer through the first tower, through the straw under the pivot saddle, and out through the second tower.\n\nGive the beam a nudge. It should rock freely and settle without sticking. If it rubs, trim the straw a little. Cut the skewer so about a centimeter sticks out on each side.\n\nThat's the beam. The servo comes later, after the electronics are tested."
+  "text": "Now hang the beam. Push the skewer through the first tower, through the straw under the pivot saddle, and out through the second tower.\n\nGive the beam a nudge. It should rock freely and settle without sticking. If it rubs, trim the straw a little. Cut the skewer so about half an inch sticks out on each side.\n\nThat's the beam. The servo comes later, after the electronics are tested."
  },
  {
   "id": "power",
@@ -107,12 +107,12 @@
  {
   "id": "servomount",
   "title": "Servo and push-rod",
-  "text": "Back to the cardboard. Click Level in the Gym, so the servo holds its exact middle.\n\nGlue the servo post onto the base just behind the track, as shown, and glue the servo to its front face, with the shaft pointing toward you. Push the long single arm onto the shaft, pointing toward the far wall, as close to horizontal as the teeth allow.\n\nStraighten the paperclip. Bend a small hook at one end, thread it through the arm's outermost hole, and squeeze the hook closed. Do the same at the top, through the hole in the saddle at twenty-nine. With the servo at Level, the rod should hang straight and the beam should sit close to level. Don't glue these joints. They need to pivot."
+  "text": "Back to the cardboard. Click Level in the Gym, so the servo holds its exact middle.\n\nGlue the servo post onto the base just behind the track, as shown, and glue the servo to its front face, with the shaft pointing toward you. Push the long single arm onto the shaft, pointing toward the far wall, as close to horizontal as the teeth allow.\n\nStraighten the paperclip. Bend a small hook at one end, thread it through the arm's outermost hole, and squeeze the hook closed. Do the same at the top, through the hole in the saddle at eleven and three eighths. With the servo at Level, the rod should hang straight and the beam should sit close to level. Don't glue these joints. They need to pivot."
  },
  {
   "id": "sensors",
   "title": "Mount the sensors",
-  "text": "Now mount the passengers. Push the ultrasonic sensor's silver cans through the holes in the end plate, and tape the board in place.\n\nStick the motion sensor board to the outside of the track, near fifteen centimeters, with double-sided tape. Any orientation works.\n\nStick the L E D matrix to the front tower, below the skewer, facing you. Then route the wires so they hang loosely. The beam has to swing without tugging on anything."
+  "text": "Now mount the passengers. Push the ultrasonic sensor's silver cans through the holes in the end plate, and tape the board in place.\n\nStick the motion sensor board to the outside of the track, near six inches, with double-sided tape. Any orientation works.\n\nStick the L E D matrix to the front tower, below the skewer, facing you. Then route the wires so they hang loosely. The beam has to swing without tugging on anything."
  },
  {
   "id": "calibrate",

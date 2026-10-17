@@ -1,4 +1,5 @@
-// Fulcrum, the robot, as a three.js scene built to BUILD_SPEC.md (centimeters, z up, x along the
+// Fulcrum, the robot, as a three.js scene built to BUILD_SPEC.md in its original metric
+// sizes (centimeters, within 1/8 in of the inch sizes the guide gives; z up, x along the
 // track from the sonar end, y across with the viewer on the -y side). Pass in the THREE global
 // (r128): buildScene(THREE, opts) returns { scene, parts, beam, ... }; applyStep(S, id) sets up one
 // build step (which parts show, which are new, how the beam is posed).
@@ -34,7 +35,7 @@ export const STEPS = [
 const SMILE = [0x00, 0x66, 0x66, 0x00, 0x81, 0x42, 0x3C, 0x00];
 
 export function buildScene(THREE, opts = {}) {
-  const braces = opts.braces || 'inner';     // see BUILD_SPEC note: outer braces overhang the 16 cm base
+  const braces = opts.braces || 'inner';     // see BUILD_SPEC note: outer braces overhang the base
   const scene = new THREE.Scene();
   const parts = {};
   const lin = hex => new THREE.Color(hex).convertSRGBToLinear();

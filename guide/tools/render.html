@@ -59,10 +59,10 @@ const CONF = {
   fold: {
     dir: [-0.78, -1.0, 0.5], margins: [0.1, 0.04, 0.14, 0.06],
     notes: () => [
-      dim(B(0, WALL / Math.SQRT2, FOLD + WALL / Math.SQRT2), B(44, WALL / Math.SQRT2, FOLD + WALL / Math.SQRT2), '44 cm', [0, -70]),
+      dim(B(0, WALL / Math.SQRT2, FOLD + WALL / Math.SQRT2), B(44, WALL / Math.SQRT2, FOLD + WALL / Math.SQRT2), '17¼ in', [0, -70]),
       callout(B(17, 0, FOLD), 'Score down the middle,', [-40, 170], 'then fold to a right angle'),
       arrowAlong(B(22, WALL / Math.SQRT2 * 0.45, FOLD + WALL / Math.SQRT2 * 0.45 + 0.3), B(38, WALL / Math.SQRT2 * 0.45, FOLD + WALL / Math.SQRT2 * 0.45 + 0.3), 'ridges inside run the long way', [40, 64]),
-      dim(B(0, 0, FOLD), B(0, WALL / Math.SQRT2, FOLD + WALL / Math.SQRT2), '3.5 cm', [-80, -10]),
+      dim(B(0, 0, FOLD), B(0, WALL / Math.SQRT2, FOLD + WALL / Math.SQRT2), '1⅜ in', [-80, -10]),
       inset('fold'),
     ],
   },
@@ -71,30 +71,30 @@ const CONF = {
     notes: () => [
       tag('The track upside down', [40, 40]),
       callout(B(0, 0, FOLD + 1), 'Sonar end', [-40, 120]),
-      ...[[5, '5 cm', [-60, -150]], [22, '22 cm · pivot', [-40, -170]], [29, '29 cm · push-rod', [-20, -185]], [39, '39 cm', [120, -120]]]
+      ...[[5, '2 in', [-60, -150]], [22, '8⅝ in · pivot', [-40, -170]], [29, '11⅜ in · push-rod', [-20, -185]], [39, '15⅜ in', [120, -120]]]
         .map(([x, t, o]) => callout(B(x, -SADDLE_W / 2 + 0.6, STRAW_R + 0.05), t, o)),
-      callout(B(22, 4.6, 0), 'Straw glued along the edge', [140, 120], 'about 10.5 cm long'),
-      callout(B(29 - T / 2, 0, STRAW_R + 0.7), 'Small hole, 7 mm', [190, 60], 'from the edge, centered'),
+      callout(B(22, 4.6, 0), 'Straw glued along the edge', [140, 120], 'about 4⅛ in long'),
+      callout(B(29 - T / 2, 0, STRAW_R + 0.7), 'Small hole, ¼ in', [190, 60], 'from the edge, centered'),
     ],
   },
   ends: {
     dir: [-1.0, -0.72, 0.62], margins: [0.08, 0.06, 0.14, 0.14],
     notes: () => [
-      dim(B(-T, -1.3, BALL_Z), B(-T, 1.3, BALL_Z), '2.6 cm', [0, -150]),
-      callout(B(-T, 1.3 + 0.55, BALL_Z - 0.55), 'Two 1.6 cm holes,', [220, -10], 'centered at the ball’s height'),
-      callout(B(-T, -2.6, FOLD + 2.6), 'Sonar plate, 7 × 9 cm', [-150, -40]),
-      callout(B(-T, -2.8, FOLD - 0.95), 'Bottom edge about', [-130, 40], '1 cm below the fold'),
-      callout(B(44 + T, 0, FOLD + 4.2), 'Far wall, 7 × 6 cm', [60, -90]),
+      dim(B(-T, -1.3, BALL_Z), B(-T, 1.3, BALL_Z), '1 in', [0, -150]),
+      callout(B(-T, 1.3 + 0.55, BALL_Z - 0.55), 'Two ⅝ in holes,', [220, -10], 'centered at the ball’s height'),
+      callout(B(-T, -2.6, FOLD + 2.6), 'Sonar plate, 2¾ × 3½ in', [-150, -40]),
+      callout(B(-T, -2.8, FOLD - 0.95), 'Bottom edge about', [-130, 40], '⅜ in below the fold'),
+      callout(B(44 + T, 0, FOLD + 4.2), 'Far wall, 2¾ × 2⅜ in', [60, -90]),
     ],
   },
   towers: {
     dir: [-0.85, -1.0, 1.05], margins: [0.06, 0.06, 0.12, 0.1],
     notes: () => [
-      dim(V(PIVOT_X + 3.5, -TOWER_INNER, 14.4), V(PIVOT_X + 3.5, TOWER_INNER, 14.4), '10.7 cm apart', [80, -40]),
-      callout(V(PIVOT_X, -TOWER_INNER - T, PZ), 'Skewer hole: 1.5 cm below', [-250, -110], 'the top, centered'),
-      dim(V(PIVOT_X + 3.5, -TOWER_INNER - T, 0.4), V(PIVOT_X + 3.5, -TOWER_INNER - T, 14.4), '14 cm', [90, 0]),
-      callout(V(PIVOT_X - 3.3, -TOWER_INNER + 1.4, 2.6), S.braces === 'inner' ? 'Triangle brace (5 × 9),' : 'Triangle brace (5 × 9)', [-250, 130], S.braces === 'inner' ? 'on the inside of each tower' : 'on the outside of each tower'),
-      callout(V(40, -5.5, 0.4), 'Base 52 × 16 cm;', [70, 90], 'towers at its center'),
+      dim(V(PIVOT_X + 3.5, -TOWER_INNER, 14.4), V(PIVOT_X + 3.5, TOWER_INNER, 14.4), '4¼ in apart', [80, -40]),
+      callout(V(PIVOT_X, -TOWER_INNER - T, PZ), 'Skewer hole: ⅝ in below', [-250, -110], 'the top, centered'),
+      dim(V(PIVOT_X + 3.5, -TOWER_INNER - T, 0.4), V(PIVOT_X + 3.5, -TOWER_INNER - T, 14.4), '5½ in', [90, 0]),
+      callout(V(PIVOT_X - 3.3, -TOWER_INNER + 1.4, 2.6), S.braces === 'inner' ? 'Triangle brace (2 × 3½),' : 'Triangle brace (2 × 3½)', [-250, 130], S.braces === 'inner' ? 'on the inside of each tower' : 'on the outside of each tower'),
+      callout(V(40, -5.5, 0.4), 'Base 20½ × 6¼ in;', [70, 90], 'towers at its center'),
     ],
   },
   hang: {
@@ -110,11 +110,11 @@ const CONF = {
     dir: [1.15, -1.0, 0.42], margins: [0.04, 0.04, 0.06, 0.05],
     fit: { min: [23, -4, 0.4], max: [36, 5, 16] },
     notes: () => [
-      callout(V(31.4, 3.4, 7.4), 'Servo post, 6 × 8 cm,', [120, -110], 'just behind the track'),
+      callout(V(31.4, 3.4, 7.4), 'Servo post, 2⅜ × 3⅛ in,', [120, -110], 'just behind the track'),
       callout(V(29.0, 1.4, 5.5), 'Servo on its front,', [260, 40], 'shaft toward you'),
       callout(V(SHAFT.x + 1.75, 0.3, SHAFT.z), 'Horn level, pointing', [-300, 170], 'toward the far wall'),
       callout(V(28.75, 0.0, 9.6), 'Paperclip push-rod,', [-330, -20], 'hanging straight down'),
-      callout(B(29.3, 0, ROD_HOLE_Z), 'Hooked through the', [130, -150], 'saddle at 29 cm'),
+      callout(B(29.3, 0, ROD_HOLE_Z), 'Hooked through the', [130, -150], 'saddle at 11⅜ in'),
     ],
   },
   sensors: {
@@ -254,7 +254,7 @@ function drawFoldInset(ctx, x, y, w, h) {
   thick([[fx, fy], [fx + fw, fy]]);
   ctx.strokeStyle = BLUE; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(fx + fw / 2, fy - 18); ctx.lineTo(fx + fw / 2, fy + 18); ctx.stroke();
   ctx.fillStyle = INK; ctx.font = '400 20px "Atkinson Hyperlegible", sans-serif'; ctx.textAlign = 'center';
-  ctx.fillText('7 cm', fx + fw / 2, fy + 46); ctx.fillStyle = BLUE; ctx.fillText('score', fx + fw / 2, fy - 26);
+  ctx.fillText('2¾ in', fx + fw / 2, fy + 46); ctx.fillStyle = BLUE; ctx.fillText('score', fx + fw / 2, fy - 26);
   // arrow
   ctx.strokeStyle = INK; ctx.fillStyle = INK; ctx.lineWidth = 3;
   ctx.beginPath(); ctx.moveTo(fx + fw + 16, fy); ctx.lineTo(fx + fw + 52, fy); ctx.stroke(); arrowHead(ctx, fx + fw + 58, fy, 0, 14);
@@ -265,7 +265,7 @@ function drawFoldInset(ctx, x, y, w, h) {
   ctx.beginPath(); ctx.arc(vx, vy - 10, 30, -Math.PI * 0.75, -Math.PI * 0.25); ctx.stroke();
   ctx.fillStyle = BLUE; ctx.font = '700 22px "Atkinson Hyperlegible", sans-serif'; ctx.textAlign = 'center'; ctx.fillText('90°', vx, vy - 50);
   ctx.fillStyle = INK; ctx.font = '400 20px "Atkinson Hyperlegible", sans-serif';
-  ctx.fillText('3.5', vx - L * 0.38 - 26, vy - L * 0.28); ctx.fillText('3.5', vx + L * 0.38 + 26, vy - L * 0.28);
+  ctx.fillText('1⅜', vx - L * 0.38 - 26, vy - L * 0.28); ctx.fillText('1⅜', vx + L * 0.38 + 26, vy - L * 0.28);
 }
 
 // ---------------------------------------------------------------- camera fitting

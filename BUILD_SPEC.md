@@ -1,9 +1,12 @@
 # Fulcrum build spec
 
 The single source of truth for the physical build. The guide's text, the 3D illustrations, the
-wiring diagrams and the firmware all follow this file. Units are centimeters unless noted.
+wiring diagrams and the firmware all follow this file. Units are inches unless noted, rounded to the
+nearest 1/8 in so they can be measured with an ordinary ruler. (The simulator, the 3D model and the
+firmware work in metric; each inch size here is within 1/8 in of the metric size they use, and
+calibration absorbs the difference.)
 Coordinates: **x** runs along the track from the sonar end (x = 0 at the sonar plate) to the far
-wall (x = 44); **y** is across the robot (toward the viewer is −y); **z** is up from the tabletop.
+wall (x = 17 1/4); **y** is across the robot (toward the viewer is −y); **z** is up from the tabletop.
 
 ## Materials
 
@@ -18,57 +21,58 @@ drinking straw, 1 large paperclip, hot glue gun, box cutter or sturdy scissors, 
 tape (or poster putty), optional clear packing tape. A MacBook also needs a USB-C to USB-A adapter
 (the kit's cable is USB-A to USB-B).
 
-## Cut list (corrugated cardboard, about 4 mm thick)
+## Cut list (corrugated cardboard, about 3/16 in thick)
 
 | Part | Size | Qty | Notes |
 |---|---|---|---|
-| Base | 52 × 16 | 1 | |
-| Track | 44 × 7 | 1 | corrugation (flutes) running along the 44 cm length |
-| Saddle | 7 wide × 4.5 tall | 4 | 90° V-notch cut from both top corners down to the center, 3.5 deep |
-| Tower | 7 wide × 14 tall | 2 | flutes vertical; skewer hole 1.5 below the top edge, centered |
-| Tower brace | right triangle, legs 5 × 9 | 2 | |
-| Sonar plate | 7 wide × 9 tall | 1 | two 1.6 cm holes, see assembly |
-| Far wall | 7 wide × 6 tall | 1 | |
-| Servo post | 6 wide × 8 tall | 1 | |
-| Post brace | right triangle, legs 4 × 6 | 1 | |
+| Base | 20 1/2 × 6 1/4 | 1 | |
+| Track | 17 1/4 × 2 3/4 | 1 | corrugation (flutes) running along the 17 1/4 in length |
+| Saddle | 2 3/4 wide × 1 3/4 tall | 4 | 90° V-notch cut from both top corners down to the center, 1 3/8 deep |
+| Tower | 2 3/4 wide × 5 1/2 tall | 2 | flutes vertical; skewer hole 5/8 below the top edge, centered |
+| Tower brace | right triangle, legs 2 × 3 1/2 | 2 | |
+| Sonar plate | 2 3/4 wide × 3 1/2 tall | 1 | two 5/8 in holes, see assembly |
+| Far wall | 2 3/4 wide × 2 3/8 tall | 1 | |
+| Servo post | 2 3/8 wide × 3 1/8 tall | 1 | |
+| Post brace | right triangle, legs 1 5/8 × 2 3/8 | 1 | |
 
 ## Assembly (finished geometry)
 
-- **Base** lies flat: x from −4 to 48, y from −8 to 8, z from 0 to 0.4.
-- **Track**: the 44 × 7 strip scored down the middle and folded to a 90° V (each wall 3.5 wide). The V's
-  outer apex (the fold) runs along y = 0. Optional: line the inside with clear packing tape.
-- **Saddles** under the track, perpendicular to it, at x = 5, 22 (pivot), 29 (push-rod), 39. Each
-  saddle's notch hugs the outside of the V.
-- **Straw**: 10.5 long, glued along the bottom edge of the pivot saddle (x = 22), running across (along y).
-- **Push-rod hole**: in the x = 29 saddle, 0.7 above its bottom edge, centered (poke with a skewer tip).
+- **Base** lies flat: x from −1 5/8 to 18 7/8, y from −3 1/8 to 3 1/8, z from 0 to 3/16.
+- **Track**: the 17 1/4 × 2 3/4 strip scored down the middle and folded to a 90° V (each wall 1 3/8 wide).
+  The V's outer apex (the fold) runs along y = 0. Optional: line the inside with clear packing tape.
+- **Saddles** under the track, perpendicular to it, at x = 2, 8 5/8 (pivot), 11 3/8 (push-rod), 15 3/8.
+  Each saddle's notch hugs the outside of the V.
+- **Straw**: 4 1/8 long, glued along the bottom edge of the pivot saddle (x = 8 5/8), running across (along y).
+- **Push-rod hole**: in the x = 11 3/8 saddle, 1/4 above its bottom edge, centered (poke with a skewer tip).
 - **Sonar plate**: glued across the x = 0 end of the track, centered on the V, its bottom edge about
-  1 cm below the fold. The HC-SR04's two silver cans poke through two 1.6 cm holes, 2.6 cm apart
+  3/8 below the fold. The HC-SR04's two silver cans poke through two 5/8 in holes, 1 in apart
   center to center, centered at the height of the ball's center (find it by holding the ball in the
   V against the plate and marking). Sonar board on the outside, its 4 pins pointing down.
-- **Far wall**: glued across the x = 44 end.
-- **Towers**: stand on the base at x = 18.5..25.5 (centered on x = 22), one on each side of the track:
-  inner faces at y = ±5.35 (10.7 apart). Each has a brace glued to its **inner** face along its sonar-side
-  edge (x = 18.5..18.9). A brace on the outer face would hang 2.75 cm off the 16 cm base and the front one
-  would hit the LED matrix. The inner braces stay under 9.4 cm and clear the beam even at full tilt.
-- **Pivot**: a bamboo skewer runs along y through tower, straw, tower, at height z = 12.9 (hole 1.5 below
-  each tower's 14 cm top; the towers stand on the 0.4 cm base). The track's fold sits about 1.3 above the skewer; the ball's center about
-  4.5 above it. Trim the skewer to about 13 long.
-- **Servo post**: 6 × 8 upright standing on the base just behind the track's centerline: its front face at
-  y = +3.4, spanning x = 25.8..31.8 (clear of the back tower, which ends at x = 25.5). Its brace stands
-  behind it at x ≈ 31.4.
+- **Far wall**: glued across the x = 17 1/4 end.
+- **Towers**: stand on the base at x = 7 1/4..10 (centered on x = 8 5/8), one on each side of the track:
+  inner faces at y = ±2 1/8 (4 1/4 apart). Each has a brace glued to its **inner** face along its
+  sonar-side edge. A brace on the outer face would hang about 1 in off the 6 1/4 in base and the front
+  one would hit the LED matrix. The inner braces stay under 3 3/4 tall and clear the beam even at full tilt.
+- **Pivot**: a bamboo skewer runs along y through tower, straw, tower, at height z ≈ 5 1/16 (hole 5/8
+  below each tower's 5 1/2 in top; the towers stand on the 3/16 in base). The track's fold sits about
+  1/2 above the skewer; the ball's center about 1 3/4 above it. Trim the skewer to about 5 1/2 long.
+- **Servo post**: 2 3/8 × 3 1/8 upright standing on the base just behind the track's centerline: its
+  front face at y = +1 3/8, spanning x ≈ 10 1/8..12 1/2 (clear of the back tower, which ends at x = 10).
+  Its brace stands behind it.
 - **Servo (SG90)**: glued by its bottom face to the post's front face, output shaft pointing toward −y
-  (toward the viewer). That puts the horn in the track's own vertical plane (y ≈ 0). Shaft at x ≈ 27.6,
-  z ≈ 5.
+  (toward the viewer). That puts the horn in the track's own vertical plane (y ≈ 0). Shaft at
+  x ≈ 10 7/8, z ≈ 2.
 - **Horn**: the long single-arm horn, pushed on while the servo holds its middle position (the Gym's
-  Level button), pointing horizontally toward the far wall (+x). Its outermost hole is then at x ≈ 29.
-- **Push-rod**: a straightened large paperclip from that horn hole straight up to the hole in the x = 29
-  saddle, about 9 between its hooked ends (about 10.5 cm of wire). Vertical when the beam is level. Bend each hook closed after
-  threading it so it can't slip out; the joints must still turn freely (no glue on them).
-- **Gyro (GY-521)**: stuck to the outside of the track's front wall near x = 15, any orientation
+  Level button), pointing horizontally toward the far wall (+x). Its outermost hole is then at x ≈ 11 3/8.
+- **Push-rod**: a straightened large paperclip from that horn hole straight up to the hole in the
+  x = 11 3/8 saddle, about 3 1/2 between its hooked ends (about 4 1/8 in of wire). Vertical when the
+  beam is level. Bend each hook closed after threading it so it can't slip out; the joints must still
+  turn freely (no glue on them).
+- **Gyro (GY-521)**: stuck to the outside of the track's front wall near x = 6, any orientation
   (calibration figures out how it's mounted). Double-sided tape or a dab of hot glue on the board's edge.
 - **LED matrix (MAX7219 module)**: stuck to the front face of the front tower, below the skewer, facing
   the viewer. Pins at the side.
-- **Ball**: ping-pong ball, radius 2. Golf ball or small rubber ball also work (pick it in the Gym).
+- **Ball**: ping-pong ball (1 1/2 in across). Golf ball or small rubber ball also work (pick it in the Gym).
 - **Electronics**: breadboard and Arduino sit on the table in front of the robot, toward the sonar end.
 
 Ranges: the beam tilts about ±10° at the servo's ±700 µs; Fulcrum uses ±7° plus level trim.
